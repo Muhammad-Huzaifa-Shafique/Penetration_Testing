@@ -4,3 +4,4 @@ response = embed(model='nomic-embed-text', input='SUID binaries can be abused fo
 print(response['embeddings'])
 # test
 # test
+# auto-backup test
