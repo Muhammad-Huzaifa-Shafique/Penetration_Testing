@@ -1,0 +1,6 @@
+# Week 5 smoke test (not the Week 9 answer key)
+How do I escalate privileges on Linux when I find a SUID binary?
+Which nmap option scans every TCP port?
+As a normal domain user, how can I get service account password hashes to crack offline?
+ssh local port forwarding
+How do I bake sourdough bread?
