@@ -13,7 +13,7 @@ qwen3-embedding:latest      64b933495768    4.7 GB    4 weeks ago
 llama3:latest               365c0bd3c000    4.7 GB    11 months ago
 
 ==== Project folder: /home/huzai/projects/PenetrationTesting ===========
-top level: .git/  .gitignore  .idea/  .venv/  CACHEDIR.TAG  __pycache__/  autosave.sh  autosave.sh:Zone.Identifier  autosave_watchdog.py  autosave_watchdog.py:Zone.Identifier  bin/  build_index (1).py:Zone.Identifier  build_index.py  build_index.py:Zone.Identifier  chroma_db/  chunk_corpus.py  collect_corpus.sh  corpus/  cosine_similarity_test.py  etc/  inspect_index.py  lib/  pyvenv.cfg  query_index.py  query_index.py:Zone.Identifier  requirements.txt  run_week4.py  run_week4.py:Zone.Identifier  setup_github.sh  setup_github.sh:Zone.Identifier  share/  test_embed.py  venv/  week4_bundle.txt  week4_index_report.txt
+top level: .git/  .gitignore  .idea/  .venv/  CACHEDIR.TAG  __pycache__/  autosave.sh  autosave.sh:Zone.Identifier  autosave_watchdog.py  autosave_watchdog.py:Zone.Identifier  bin/  build_index (1).py:Zone.Identifier  build_index.py  build_index.py:Zone.Identifier  chroma_db/  chunk_corpus.py  collect_corpus.sh  corpus/  cosine_similarity_test.py  etc/  inspect_index.py  lib/  pyvenv.cfg  query_index.py  query_index.py:Zone.Identifier  requirements.txt  retrieve.py  run_week4.py  run_week4.py:Zone.Identifier  setup_github.sh  setup_github.sh:Zone.Identifier  share/  test_embed.py  venv/  week4_bundle.txt  week4_index_report.txt
 scripts and notes (2 levels deep, corpus/ skipped):
    autosave.sh
    autosave_watchdog.py
@@ -26,6 +26,7 @@ scripts and notes (2 levels deep, corpus/ skipped):
    pyvenv.cfg
    query_index.py
    requirements.txt
+   retrieve.py
    run_week4.py
    run_week4.py:Zone.Identifier
    setup_github.sh
@@ -45,10 +46,10 @@ size on disk: 404.0 MB
    count: 22720
    vector size: 768
    distance metric: cosine (from collection metadata)
-   raw metadata: {'hnsw:space': 'cosine', 'source_chunks': 'chunks.jsonl', 'embedder': 'nomic-embed-text'}
-   raw configuration: {'hnsw': {'space': 'cosine', 'ef_construction': 100, 'ef_search': 100, 'max_neighbors': 16, 'resize_factor': 1.2, 'sync_threshold': 1000}, 'spann': None, 'embedding_function': <chromadb.api.types.DefaultEmbeddingFunction object at 0x7136af24a3f0>}
+   raw metadata: {'embedder': 'nomic-embed-text', 'hnsw:space': 'cosine', 'source_chunks': 'chunks.jsonl'}
+   raw configuration: {'hnsw': {'space': 'cosine', 'ef_construction': 100, 'ef_search': 100, 'max_neighbors': 16, 'resize_factor': 1.2, 'sync_threshold': 1000}, 'spann': None, 'embedding_function': <chromadb.api.types.DefaultEmbeddingFunction object at 0x709db5a4e5a0>}
    chunk text stored: yes
-   metadata keys: chunk_index (22720), source (22720), section (22720), source_type (22720), n_chars (22720), tool (894)
+   metadata keys: source_type (22720), n_chars (22720), chunk_index (22720), source (22720), section (22720), tool (894)
    by source_type: hacktricks=21826, manpage=894
    tool tag: 894 chunks across 20 tools; none on 21826
    top tools: curl=224, nmap=188, wget=102, find=90, sudo=50, smbclient=48, rpcclient=33, nc=19, ss=19, whatweb=19, hashcat=17, ldapsearch=17
@@ -59,10 +60,10 @@ size on disk: 404.0 MB
    count: 22720
    vector size: 384
    distance metric: cosine (from collection metadata)
-   raw metadata: {'embedder': 'all-minilm', 'hnsw:space': 'cosine', 'source_chunks': 'chunks.jsonl'}
-   raw configuration: {'hnsw': {'space': 'cosine', 'ef_construction': 100, 'ef_search': 100, 'max_neighbors': 16, 'resize_factor': 1.2, 'sync_threshold': 1000}, 'spann': None, 'embedding_function': <chromadb.api.types.DefaultEmbeddingFunction object at 0x7136af24a6c0>}
+   raw metadata: {'source_chunks': 'chunks.jsonl', 'hnsw:space': 'cosine', 'embedder': 'all-minilm'}
+   raw configuration: {'hnsw': {'space': 'cosine', 'ef_construction': 100, 'ef_search': 100, 'max_neighbors': 16, 'resize_factor': 1.2, 'sync_threshold': 1000}, 'spann': None, 'embedding_function': <chromadb.api.types.DefaultEmbeddingFunction object at 0x709db5a4e8a0>}
    chunk text stored: yes
-   metadata keys: section (22720), n_chars (22720), source (22720), source_type (22720), chunk_index (22720), tool (894)
+   metadata keys: source (22720), source_type (22720), chunk_index (22720), n_chars (22720), section (22720), tool (894)
    by source_type: hacktricks=21826, manpage=894
    tool tag: 894 chunks across 20 tools; none on 21826
    top tools: curl=224, nmap=188, wget=102, find=90, sudo=50, smbclient=48, rpcclient=33, nc=19, ss=19, whatweb=19, hashcat=17, ldapsearch=17
