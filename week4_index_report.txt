@@ -1,0 +1,36 @@
+
+==== Environment =======================================================
+python: 3.12.3
+ollama models:
+NAME                        ID              SIZE      MODIFIED      
+mxbai-embed-large:latest    468836162de7    669 MB    13 days ago      
+all-minilm:latest           1b226e2802db    45 MB     13 days ago      
+nomic-embed-text:latest     0a109f422b47    274 MB    4 weeks ago      
+llama3.1:8b                 46e0c10c039e    4.9 GB    4 weeks ago      
+mistral:latest              6577803aa9a0    4.4 GB    4 weeks ago      
+qwen3-embedding:latest      64b933495768    4.7 GB    4 weeks ago      
+llama3:latest               365c0bd3c000    4.7 GB    11 months ago
+
+==== Project folder: /home/huzai/projects/PenetrationTesting ===========
+top level: .git/  .gitignore  .idea/  .venv/  CACHEDIR.TAG  __pycache__/  autosave.sh  autosave.sh:Zone.Identifier  autosave_watchdog.py  autosave_watchdog.py:Zone.Identifier  bin/  build_index (1).py:Zone.Identifier  build_index.py  build_index.py:Zone.Identifier  chroma_db/  chunk_corpus.py  collect_corpus.sh  corpus/  cosine_similarity_test.py  etc/  inspect_index.py  lib/  pyvenv.cfg  query_index.py  query_index.py:Zone.Identifier  requirements.txt  run_week4.py  run_week4.py:Zone.Identifier  setup_github.sh  setup_github.sh:Zone.Identifier  share/  test_embed.py  venv/  week4_index_report.txt
+scripts and notes (2 levels deep, corpus/ skipped):
+   autosave.sh
+   autosave_watchdog.py
+   bin/activate_this.py
+   build_index.py
+   chunk_corpus.py
+   collect_corpus.sh
+   cosine_similarity_test.py
+   inspect_index.py
+   pyvenv.cfg
+   query_index.py
+   requirements.txt
+   run_week4.py
+   run_week4.py:Zone.Identifier
+   setup_github.sh
+   test_embed.py
+   week4_index_report.txt
+corpus/: MANIFEST.txt  chunks.jsonl  hacktricks  manpages
+
+==== Chroma ============================================================
+chromadb is not importable here. Activate the venv you used for Week 4 and re-run.
