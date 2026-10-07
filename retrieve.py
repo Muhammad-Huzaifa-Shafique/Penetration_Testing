@@ -30,6 +30,10 @@ Usage
             which values exist
 --list      shows what is in the database: collections, sizes, metric, metadata
 
+nomic-embed-text-prefixed is the same chunks embedded the way nomic's model card asks
+("search_document: " in front of chunks, "search_query: " in front of questions).
+python build_nomic_prefixed.py builds it; after that --compare includes it automatically.
+
 Week 6's chat loop can import this instead of shelling out:
     from retrieve import retrieve
     for hit in retrieve("how do I enumerate SMB shares", embedder="nomic-embed-text", k=5):
@@ -56,7 +60,11 @@ from build_index import default_collection_name, embed_texts  # same helpers Wee
 DEFAULT_EMBEDDER = os.environ.get("CASEFILE_EMBEDDER", "nomic-embed-text")
 DEFAULT_DB = os.environ.get("CASEFILE_DB", "./chroma_db")
 # --compare and --list look for an index for each of these. Add a name if you build another.
-KNOWN_EMBEDDERS = ["nomic-embed-text", "qwen3-embedding", "mxbai-embed-large", "all-minilm"]
+KNOWN_EMBEDDERS = ["nomic-embed-text", "nomic-embed-text-prefixed", "qwen3-embedding",
+                   "mxbai-embed-large", "all-minilm"]
+# An index can be built from the same Ollama model but fed differently. For those, this says
+# which model to call and what to put in front of every question (it must match the index).
+VARIANTS = {"nomic-embed-text-prefixed": ("nomic-embed-text", "search_query: ")}
 CHUNKS_FILE = "corpus/chunks.jsonl"
 OVERFETCH = 3  # with dedupe on, fetch k * OVERFETCH results so k different chunks survive
 
@@ -131,11 +139,12 @@ def metric_of(collection) -> str:
 
 # --- searching ---------------------------------------------------------------
 def _embed(question: str, embedder: str) -> list[float]:
+    model, prefix = VARIANTS.get(embedder, (embedder, ""))
     try:
-        vec = embed_texts([question], embedder)[0]
+        vec = embed_texts([prefix + question], model)[0]
     except Exception as e:  # Ollama not running, model not pulled, ...
         raise RuntimeError(
-            f"could not embed the question with '{embedder}' ({type(e).__name__}: {e}). "
+            f"could not embed the question with '{model}' ({type(e).__name__}: {e}). "
             "Is Ollama running (try: ollama list) and is the model pulled?"
         ) from e
     return [float(x) for x in vec]
