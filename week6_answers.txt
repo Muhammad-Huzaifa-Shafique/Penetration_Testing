@@ -1,3 +1,157 @@
 started 22:02:53
 
 ==================== Which nmap option scans every TCP port?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] man nmap > EXAMPLES   (sim 0.846)
+  [2] man nmap > PORT SPECIFICATION AND SCAN ORDER   (sim 0.833)
+  [3] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > **Focus Analysis**   (sim 0.833)
+  [4] man nmap > PORT SCANNING BASICS   (sim 0.822)
+  [5] man nmap > HOST DISCOVERY   (sim 0.816)
+
+Answer (on CPU the first words can take a while):
+
+According to [2], you can specify all 65,335 ports by using the option `-p-` or `-p all`.
+[prompt 1861 tokens, answer 28 tokens]
+
+
+==================== How do I set up SSH local port forwarding?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.812)
+  [2] generic-hacking/tunneling-and-port-forwarding > Port2Port   (sim 0.768)
+  [3] generic-hacking/reverse-shells/full-ttys > ReverseSSH   (sim 0.767)
+  [4] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.763)
+  [5] linux-hardening/linux-basics/linux-privilege-escalation/README > ForwardAgent/AllowAgentForwarding   (sim 0.760)
+
+Answer (on CPU the first words can take a while):
+
+To set up SSH local port forwarding, use the `-L` flag. According to [2], the syntax is:
+
+```bash
+ssh -i ssh_key <user>@<ip_compromised> -L <attacker_port>:<ip_victim>:<remote_port> [-p <ssh_port>] [-N -f]
+```
+
+This will listen on the client and connect to the destination from the SSH server side.
+[prompt 1191 tokens, answer 88 tokens]
+
+
+==================== How does Kerberoasting work, and how do I crack the service ticket offline?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] windows-hardening/active-directory-methodology/README > Kerberoast   (sim 0.808)
+  [2] windows-hardening/active-directory-methodology/kerberoast > Kerberoast   (sim 0.769)
+  [3] windows-hardening/active-directory-methodology/golden-ticket > References   (sim 0.743)
+  [4] windows-hardening/active-directory-methodology/kerberoast > Detection   (sim 0.739)
+  [5] windows-hardening/active-directory-methodology/silver-ticket > References   (sim 0.739)
+
+Answer (on CPU the first words can take a while):
+
+Kerberoasting involves obtaining TGS tickets used by services tied to user accounts and cracking their encryption—which is based on user passwords—offline [1]. The encryption of these tickets utilizes keys that originate from user passwords, allowing for offline credential cracking [2].
+
+To crack the service ticket offline, you need to obtain the TGS ticket and then use the user's password to decrypt it.
+[prompt 1319 tokens, answer 79 tokens]
+
+
+==================== How can SUID binaries be used for privilege escalation on Linux?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] linux-hardening/linux-basics/linux-privilege-escalation/README > References   (sim 0.756)
+  [2] linux-hardening/linux-basics/linux-privilege-escalation/README > SUID Binary – .so injection   (sim 0.747)
+  [3] pentesting-web/ssti-server-side-template-injection/README > XWiki SolrSearch Groovy RCE (CVE-2025-24893)   (sim 0.744)
+  [4] linux-hardening/linux-basics/linux-privilege-escalation/README > CVE-2016-5195 (DirtyCow)   (sim 0.739)
+  [5] network-services-pentesting/50030-50060-50070-50075-50090-pentesting-hadoop > vulnerable if it contains $ORIGIN/:../lib/native/   (sim 0.735)
+
+Answer (on CPU the first words can take a while):
+
+According to [2], SUID binaries can be used for privilege escalation on Linux by exploiting vulnerabilities in shared object (.so) files loaded by the binary. This can be checked by running the following command:
+
+```bash
+strace <SUID-BINARY> 2>&1 | grep -i -E "open|access|no such file"
+```
+
+If the binary loads a .so file that does not exist, it may be possible to create a malicious .so file that, when loaded, executes a payload that elevates privileges. This can be done by compiling a C file containing the payload into a shared object file, for example:
+
+```bash
+gcc -shared -o /path/to/.config/libcalc.so -fPIC /path/to/.config/libcalc.c
+```
+
+Then, running the affected SUID binary should trigger the exploit, allowing for potential system compromise.
+
+Additionally, [5] mentions that a SUID binary, such as `/opt/hadoop/bin/container-executor`, can be exploited if it contains a vulnerable path, but this is not directly related to the exploitation of SUID binaries for privilege escalation.
+[prompt 1335 tokens, answer 231 tokens]
+
+
+==================== What does the nmap -sV option do?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > Recent Practical Notes (7.94+)   (sim 0.747)
+  [2] man nmap > SERVICE AND VERSION DETECTION   (sim 0.746)
+  [3] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > Portable HTML-friendly XML   (sim 0.743)
+  [4] man nmap > OPTIONS SUMMARY   (sim 0.737)
+  [5] man nmap > RUNTIME INTERACTION   (sim 0.733)
+
+Answer (on CPU the first words can take a while):
+
+The `nmap -sV` option is an alias for `-sR` [2], which was previously used to activate the RPC grinder separately from version detection, but now these options are always combined. 
+
+Version detection is also mentioned in [1], which states that since Nmap 7.94, UDP port scan (`-sU`) and version detection (`-sV`) use the same `nmap-service-probes` payload source. 
+
+Additionally, [3] shows an example of using `nmap -sV` to generate a portable HTML-friendly XML output.
+[prompt 1469 tokens, answer 120 tokens]
+
+
+==================== How do I crack password hashes with John the Ripper?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] man john > DESCRIPTION   (sim 0.789)
+  [2] man john > USAGE   (sim 0.784)
+  [3] linux-hardening/software-information/freeipa-pentesting > Hashes <a href="#id-482b" id="id-482b"></a>   (sim 0.776)
+  [4] man john > MODES   (sim 0.771)
+  [5] network-services-pentesting/ipsec-ike-vpn-pentesting > Capturing & cracking the hash   (sim 0.746)
+
+Answer (on CPU the first words can take a while):
+
+To crack password hashes with John the Ripper, you can use the following modes:
+
+*   Wordlist mode: John will simply use a file with a list of words that will be checked against the passwords. See RULES for the format of wordlist files. [4]
+*   Incremental mode: This is the most powerful mode. John will try any character combination to resolve the password. [4]
+*   Single crack mode: John will try to crack the password using the login/GECOS information as passwords. [4]
+
+To crack specific hash formats, you can use the following:
+
+*   For SSHA512 hashes, decode the base64 value and pass the resulting format to John the Ripper. [3]
+*   For PBKDF2_SHA256 hashes, use John the Ripper only when it supports the exact stored format, and do not truncate the digest. [3]
+*   For NT hashes, decode the base64 ipaNTHash value and re-encode it as ASCII hex before passing it to John the Ripper. [3]
+
+To extract the hashes, you need to be root in the FreeIPA server, where you can use the dbscan tool to dump Directory Server database contents. [3]
+
+To crack the hash, you can use the following commands:
+
+```bash
+john -show passwd
+john -restore
+john -show -shells:-/etc/expired passwd
+```
+
+You can also use the ikescan2john.py script to convert the hash to a format that can be used by John the Ripper. [5]
+
+Note that the specific command to crack the hash will depend on the format of the hash and the mode you want to use.
+[prompt 1515 tokens, answer 349 tokens]
+
+
+==================== What does the ffuf -mc flag do?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] macos-hardening/macos-security-and-privilege-escalation/macos-files-folders-and-binaries/README > Flag modifiers   (sim 0.667)
+  [2] stego/images/README > References   (sim 0.649)
+  [3] network-services-pentesting/pentesting-web/README > HackTricks Automatic Commands   (sim 0.649)
+  [4] stego/audio/README > References   (sim 0.634)
+  [5] macos-hardening/macos-security-and-privilege-escalation/macos-files-folders-and-binaries/README > Flag modifiers   (sim 0.632)
+
+Answer (on CPU the first words can take a while):
+
+According to [3], the `-mc` flag is used with ffuf, and it is described as part of the command `ffuf -w {Subdomain_List}:FUZZ -u {Web_Proto}://{Domain_Name} -H "Host:FUZZ.{Domain_Name}" -c -mc all {Ffuf_Filters}`. The `-mc` flag is followed by the word `all`, but the passage does not explain what the `all` value does.
+[prompt 1454 tokens, answer 100 tokens]
+
+finished 22:29:12
