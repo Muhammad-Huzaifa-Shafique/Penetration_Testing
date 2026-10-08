@@ -4,3 +4,5 @@ Which nmap option scans every TCP port?
 As a normal domain user, how can I get service account password hashes to crack offline?
 ssh local port forwarding
 How do I bake sourdough bread?
+how do I enumerate SMB shares
+Kerberoasting SPN service ticket crack offline
