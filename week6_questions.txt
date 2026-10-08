@@ -1,0 +1,7 @@
+Which nmap option scans every TCP port?
+How do I set up SSH local port forwarding?
+How does Kerberoasting work, and how do I crack the service ticket offline?
+How can SUID binaries be used for privilege escalation on Linux?
+What does the nmap -sV option do?
+How do I crack password hashes with John the Ripper?
+What does the ffuf -mc flag do?
