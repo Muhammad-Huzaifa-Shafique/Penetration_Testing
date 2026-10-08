@@ -57,7 +57,7 @@ except ImportError:
 from build_index import default_collection_name, embed_texts  # same helpers Week 4 used
 
 # --- the simple setting ------------------------------------------------------
-DEFAULT_EMBEDDER = os.environ.get("CASEFILE_EMBEDDER", "nomic-embed-text")
+DEFAULT_EMBEDDER = os.environ.get("CASEFILE_EMBEDDER", "nomic-embed-text-prefixed")
 DEFAULT_DB = os.environ.get("CASEFILE_DB", "./chroma_db")
 # --compare and --list look for an index for each of these. Add a name if you build another.
 KNOWN_EMBEDDERS = ["nomic-embed-text", "nomic-embed-text-prefixed", "qwen3-embedding",
