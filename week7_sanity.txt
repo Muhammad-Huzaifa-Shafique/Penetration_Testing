@@ -1,0 +1,118 @@
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > Recent Practical Notes (7.94+)   (sim 0.747)
+  [2] man nmap > SERVICE AND VERSION DETECTION   (sim 0.746)
+  [3] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > Portable HTML-friendly XML   (sim 0.743)
+  [4] man nmap > OPTIONS SUMMARY   (sim 0.737)
+  [5] man nmap > RUNTIME INTERACTION   (sim 0.733)
+
+--- chunk text ---
+[1] (generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > Recent Practical Notes (7.94+))
+- Since Nmap 7.94, UDP port scan (`-sU`) and version detection (`-sV`) use the same `nmap-service-probes` payload source. A UDP response from the scan phase can immediately feed version matching, so `-sU -sV --version-light` is now a good first pass against large or lossy ranges.<sup>[[6]](#references)</sup>
+- Since Nmap 7.94, `-sV` can also probe UDP services hidden behind DTLS, which is useful for modern management/ICS gear that wraps UDP protocols in DTLS.<sup>[[6]](#references)</sup>
+- Nmap 7.95 added a large batch of new service fingerprints, including `grpc`, `mysqlx`, `remotemouse`, and `tuya`, plus new ICS-focused NSE coverage such as `hartip-info` and `iec61850-mms`. If you are scanning OT or embedded estates, updating Nmap matters more than adding custom probes too early.<sup>[[6]](#references)</sup>
+- Since Nmap 7.96, forward DNS lookups are parallelized too. Large hostname lists are much faster now, so `--system-dns` should usually be reserved for compatibility issues instead of performance.<sup>[[6]](#references)</sup>
+
+[2] (man nmap > SERVICE AND VERSION DETECTION)
+g other things.
+
+-sR is an alias for -sV. Prior to March 2011, it was used to active
+           the RPC grinder separately from version detection, but now these
+           options are always combined.
+
+--allports (Don't exclude any ports from version detection)
+           By default, Nmap version detection skips TCP port 9100 because some
+           printers simply print anything sent to that port, leading to dozens
+           of pages of HTTP GET requests, binary SSL session requests, etc.
+           This behavior can be changed by modifying or removing the Exclude
+           directive in nmap-service-probes, or you can specify --allports to
+           scan all ports regardless of any Exclude directive.
+
+[3] (generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > Portable HTML-friendly XML)
+nmap -sV --webxml -oX scan.xml 10.10.10.10
+```
+
+**Miscellaneous**
+
+**-6** Allows IPv6
+
+**-A** is the same as -O -sV -sC --traceroute
+
+**Run time**
+
+While Nmap is running we can change options:
+
+v / V Increase / decrease the verbosity level
+
+d / D Increase / decrease the debugging Level
+
+p / P Turn on / off packet tracing
+
+? Print a runtime interaction help screen
+
+**Vulscan**
+
+Nmap script that looks at versions of services obtained in an offline database (downloaded from other very important ones) and returns possible vulnerabilities
+
+The DBs it uses are:
+
+1. Scipvuldb.csv | [http://www.scip.ch/en/?vuldb](http://www.scip.ch/en/?vuldb)
+2. Cve.csv | [http://cve.mitre.org](http://cve.mitre.org/)
+3. Osvdb.csv | [http://www.osvdb.org](http://www.osvdb.org/)
+4. Securityfocus.csv | [http://www.securityfocus.com/bid/](http://www.securityfocus.com/bid/)
+5. Securitytracker.csv | [http://www.securitytracker.com](http://www.securitytracker.com/)
+6. Xforce.csv | [http://xforce.iss.net](http://xforce.iss.net/)
+7. Exploitdb.csv | [http://www.exploit-db.com](http://www.exploit-db.com/)
+8. Openvas.csv | [http://www.openvas.org](http://www.openvas.org/)
+
+To download and install in the Nmap folder:
+
+wget http://www.computec.ch/projekte/vulscan/download/nmap_nse_vulscan-2.0.tar.gz && tar -czvf nmap_nse_vulscan-2.0.tar.gz vulscan/ && sudo cp -r vulscan/ /usr/share/nmap/scripts/
+
+You would also need to download the DB packages and add them to /usr/share/nmap/scripts/vulscan/
+
+Usage:
+
+[4] (man nmap > OPTIONS SUMMARY)
+This options summary is printed when Nmap is run with no arguments, and
+       the latest version is always available at
+       https://svn.nmap.org/nmap/docs/nmap.usage.txt. It helps people remember
+       the most common options, but is no substitute for the in-depth
+       documentation in the rest of this manual. Some obscure options aren't
+       even included here.
+
+[5] (man nmap > RUNTIME INTERACTION)
+During the execution of Nmap, all key presses are captured. This allows
+       you to interact with the program without aborting and restarting it.
+       Certain special keys will change options, while any other keys will
+       print out a status message telling you about the scan. The convention
+       is that lowercase letters increase the amount of printing, and
+       uppercase letters decrease the printing. You may also press ‘?’ for
+       help.
+
+v / V
+           Increase / decrease the verbosity level
+
+d / D
+           Increase / decrease the debugging Level
+
+p / P
+           Turn on / off packet tracing
+
+?
+           Print a runtime interaction help screen
+
+Anything else
+           Print out a status message like this:
+
+Stats: 0:00:07 elapsed; 20 hosts completed (1 up), 1 undergoing Service Scan
+               Service scan Timing: About 33.33% done; ETC: 20:57 (0:00:12 remaining)
+--- end chunk text ---
+
+Answer (on CPU the first words can take a while):
+
+According to [2], the `-sV` option is an alias for `-sR` and is used for service and version detection. Prior to March 2011, it was used to activate the RPC grinder separately from version detection, but now these options are always combined.
+
+Additionally, [1] mentions that since Nmap 7.94, UDP port scan (`-sU`) and version detection (`-sV`) use the same `nmap-service-probes` payload source, which allows for immediate version matching after the scan phase.
+[prompt 1469 tokens, answer 112 tokens]
+
