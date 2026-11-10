@@ -1,5 +1,5 @@
 # Casefile answer key (Week 9). Written with AI help (Claude) from the text of corpus/chunks.jsonl.
-# Owner review: NOT DONE YET. After reading every entry, change this line to "Reviewed by the project owner on <date>".
+# Reviewed by the project owner on 2026-11-10.
 # Check it with:   python check_key.py
 #
 # One block per question; each block starts with an id: line.
