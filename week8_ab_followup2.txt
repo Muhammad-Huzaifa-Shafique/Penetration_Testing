@@ -1,0 +1,14 @@
+Casefile -- searching nomic-embed-text-prefixed. Ask a pentesting question; follow-ups are remembered.
+'/reset' forgets the conversation, '/history' shows it, 'quit' or Ctrl-D exits.
+
+Question> How do I set up SSH local port forwarding?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.812)
+  [2] generic-hacking/tunneling-and-port-forwarding > Port2Port   (sim 0.768)
+  [3] generic-hacking/reverse-shells/full-ttys > ReverseSSH   (sim 0.767)
+  [4] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.763)
+  [5] linux-hardening/linux-basics/linux-privilege-escalation/README > ForwardAgent/AllowAgentForwarding   (sim 0.760)
+
+Answer (on CPU the first words can take a while):
+
