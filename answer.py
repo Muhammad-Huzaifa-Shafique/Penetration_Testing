@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-answer.py -- Casefile Week 6: "Get a real answer out"
+answer.py -- Casefile Weeks 6-7: "Get a real answer out" + "Make it prove its work"
 
 Takes a typed pentesting question, pulls the closest chunks from your index with
 retrieve.py (Week 5), hands question + chunks to the local chat model
@@ -15,6 +15,9 @@ Run it from the project root with the venv active:
     python answer.py -q "how do I enumerate SMB shares"   # one question
     python answer.py -q "..." -e all-minilm -k 8          # pick index / chunk count
     python answer.py -q "..." --show-chunks               # also print chunk text
+
+Week 7 (citecheck.py): under every answer it prints only the passages the answer actually
+cited, with the file each came from, and flags citations that do not check out.
 
 Later weeks can import it:   from answer import ask
 (Week 8 extends build_messages() with history; Week 11 calls ask() in a loop
@@ -40,6 +43,11 @@ try:
     import ollama
 except Exception as e:  # noqa: BLE001
     sys.exit(f"Could not import the ollama library: {e}\nTry: pip install ollama")
+
+try:
+    import citecheck  # Week 7: checks the [n] citations in an answer
+except Exception as e:  # noqa: BLE001
+    sys.exit(f"Could not import citecheck.py ({e}). It must sit next to answer.py.")
 
 
 # --- settings you might tune --------------------------------------------------
@@ -237,6 +245,7 @@ class Answer:
     prompt_tokens: int | None = None
     answer_tokens: int | None = None
     truncated: bool = False
+    check: object = None  # Week 7: a citecheck.Check, filled in by ask()
 
 
 def _get(obj, name, default=None):
@@ -287,10 +296,72 @@ def ask(query, embedder=None, k=None, on_hits=None, on_token=None):
         raise ChatError(f"{type(e).__name__}: {e}") from e
 
     truncated = bool(prompt_tokens) and prompt_tokens >= NUM_CTX - 8
-    return Answer("".join(pieces), hits, prompt_tokens, answer_tokens, truncated)
+    text = "".join(pieces)
+    check = citecheck.check(text, [hit_text(h) for h in hits])
+    return Answer(text, hits, prompt_tokens, answer_tokens, truncated, check)
 
 
 # --- the terminal side --------------------------------------------------------
+
+# --- Week 7: show the sources the answer cited, and check them ----------------
+
+def source_file(source):
+    """(path, found): the full path of a chunk's source file if it can be found from the
+    project root (as stored, under corpus/, or anywhere below corpus/), else the path as stored."""
+    s = str(source).replace("\\", "/")
+    for p in (s, os.path.join("corpus", s)):
+        if os.path.isfile(p):
+            return os.path.abspath(p), True
+    base = os.path.basename(s)
+    for root, _dirs, files in os.walk("corpus"):
+        if base in files:
+            p = os.path.join(root, base)
+            if p.replace("\\", "/").endswith(s):
+                return os.path.abspath(p), True
+    return s, False
+
+
+def clip(text, n=110):
+    s = " ".join(str(text).split())
+    return s if len(s) <= n else s[: n - 3].rstrip() + "..."
+
+
+def print_verification(ans):
+    """Under the answer: only the passages it cited (the file each came from, and the wording
+    of that passage closest to each claim), then what the citation check found."""
+    chk, hits = ans.check, ans.hits
+    if chk is None or not hits:
+        return
+    print("\n" + "-" * 78)
+    if chk.cited:
+        print(f"Sources cited in the answer ({len(chk.cited)} of {len(hits)} retrieved):")
+        for n in chk.cited:
+            h = hits[n - 1]
+            score = hit_score(h)
+            print(f"  [{n}] {hit_label(h)}" + (f"   ({score})" if score else ""))
+            path, found = source_file(hit_get(h, "source", default="?"))
+            print(f"      file    : {path}" + ("" if found else "   (path as stored; not found from here)"))
+            also = hit_get(h, "also_in", default=None) or []
+            if also:
+                print(f"      same text also in: {', '.join(map(str, also[:2]))}")
+            for claim in [c for c in chk.claims if n in c.cites][:3]:
+                near, _ = citecheck.closest(claim.text, hit_text(h))
+                print(f"      claim   : {clip(claim.text)}")
+                print(f"      passage : {clip(near) if near else '(nothing close to it in this passage)'}")
+        unused = [i for i in range(1, len(hits) + 1) if i not in chk.cited]
+        if unused:
+            print("Retrieved but not cited: " + " ".join(f"[{i}]" for i in unused))
+    else:
+        print("Sources cited in the answer: none")
+    if chk.problems:
+        print(f"Citation check: {len(chk.problems)} thing(s) to look at")
+    else:
+        print("Citation check: no problems found (it checks wording, not truth)")
+    for f in chk.findings:
+        print(f"  {f.level:<5} {f.message}")
+        if f.excerpt:
+            print(f'        in: "{clip(f.excerpt, 90)}"')
+
 
 def run_once(query, embedder, k, show_chunks):
     """Ask one question and print everything. Returns True if an answer was printed."""
@@ -334,6 +405,7 @@ def run_once(query, embedder, k, show_chunks):
     if ans.truncated:
         print(f"WARNING: the prompt filled the {NUM_CTX}-token window, so some chunks were "
               "probably cut off. Lower -k or raise NUM_CTX.")
+    print_verification(ans)
     print()
     return True
 
