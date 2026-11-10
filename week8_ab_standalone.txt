@@ -1,0 +1,87 @@
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.796)
+  [2] generic-hacking/reverse-shells/full-ttys > ReverseSSH   (sim 0.780)
+  [3] windows-hardening/mythic > Move laterally   (sim 0.764)
+  [4] generic-hacking/reverse-shells/expose-local-to-the-internet > **Serveo**   (sim 0.757)
+  [5] linux-hardening/user-information/ssh-forward-agent-exploitation > Summary   (sim 0.754)
+
+Answer (on CPU the first words can take a while):
+
+The syntax for SSH remote port forwarding is:
+
+```bash
+ssh -R 0.0.0.0:port:localhost:localport user@remotehost
+```
+
+[1]
+[prompt 1193 tokens, answer 41 tokens, 103s]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (1 of 5 retrieved):
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.796)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md
+      claim   : [1]
+      passage : (nothing close to it in this passage)
+Retrieved but not cited: [2] [3] [4] [5]
+Citation check: no problems found (it checks wording, not truth)
+  NOTE  1 sentence(s) have no valid [n] (closest passage: [1])
+
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.796)
+  [2] generic-hacking/reverse-shells/full-ttys > ReverseSSH   (sim 0.780)
+  [3] windows-hardening/mythic > Move laterally   (sim 0.764)
+  [4] generic-hacking/reverse-shells/expose-local-to-the-internet > **Serveo**   (sim 0.757)
+  [5] linux-hardening/user-information/ssh-forward-agent-exploitation > Summary   (sim 0.754)
+
+Answer (on CPU the first words can take a while):
+
+The syntax for SSH remote port forwarding is:
+
+```bash
+ssh -R 0.0.0.0:port:localhost:port user@host
+```
+
+[1]
+[prompt 1193 tokens, answer 39 tokens, 10s]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (1 of 5 retrieved):
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.796)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md
+      claim   : [1]
+      passage : (nothing close to it in this passage)
+Retrieved but not cited: [2] [3] [4] [5]
+Citation check: no problems found (it checks wording, not truth)
+  NOTE  1 sentence(s) have no valid [n] (closest passage: [1])
+
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.796)
+  [2] generic-hacking/reverse-shells/full-ttys > ReverseSSH   (sim 0.780)
+  [3] windows-hardening/mythic > Move laterally   (sim 0.764)
+  [4] generic-hacking/reverse-shells/expose-local-to-the-internet > **Serveo**   (sim 0.757)
+  [5] linux-hardening/user-information/ssh-forward-agent-exploitation > Summary   (sim 0.754)
+
+Answer (on CPU the first words can take a while):
+
+The syntax for SSH remote port forwarding is:
+
+```bash
+ssh -R 0.0.0.0:port:localhost:localport user@remotehost
+```
+
+[1]
+[prompt 1193 tokens, answer 41 tokens, 10s]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (1 of 5 retrieved):
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.796)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md
+      claim   : [1]
+      passage : (nothing close to it in this passage)
+Retrieved but not cited: [2] [3] [4] [5]
+Citation check: no problems found (it checks wording, not truth)
+  NOTE  1 sentence(s) have no valid [n] (closest passage: [1])
+
