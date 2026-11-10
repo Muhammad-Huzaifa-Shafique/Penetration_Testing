@@ -1,0 +1,13 @@
+# conversation 1: follow-ups that mean nothing on their own
+Which nmap option scans every TCP port?
+What about UDP?
+Can I scan both in one run?
+/history
+/reset
+# conversation 2: a follow-up that names something new
+How do I set up SSH local port forwarding?
+And the remote version?
+/reset
+# conversation 3: a decline, then a question that stands alone
+How do I make sourdough bread?
+Which nmap option scans every TCP port?
