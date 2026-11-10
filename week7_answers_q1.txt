@@ -127,4 +127,29 @@ For machines on a local ethernet network, ARP scanning will still
 
 Answer (on CPU the first words can take a while):
 
-According to [2], you can use the option `-p-` or `-p all`
+According to [2], you can use the option `-p-` or `-p all` to scan all 65,335 ports.
+[prompt 1861 tokens, answer 29 tokens]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (1 of 5 retrieved):
+  [2] man nmap > PORT SPECIFICATION AND SCAN ORDER   (sim 0.833)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/manpages/nmap.man.txt
+      claim   : According to [2], you can use the option `-p-` or `-p all` to scan all 65,335 ports.
+      passage : -p port ranges (Only scan specified ports) This option specifies which ports you want to scan and overrides...
+Retrieved but not cited: [1] [3] [4] [5]
+Citation check: 1 thing(s) to look at
+  WARN  [2] does not contain 65335 (it is in [3])
+        in: "According to [2], you can use the option `-p-` or `-p all` to scan all 65,335 ports."
+
+
+==================== SUMMARY: citation checks
+
+1. Which nmap option scans every TCP port?   (0m12s)
+   Sources cited in the answer (1 of 5 retrieved):
+     [2] man nmap > PORT SPECIFICATION AND SCAN ORDER   (sim 0.833)
+   Retrieved but not cited: [1] [3] [4] [5]
+   Citation check: 1 thing(s) to look at
+     WARN  [2] does not contain 65335 (it is in [3])
+           in: "According to [2], you can use the option `-p-` or `-p all` to scan all 65,335 ports."
+
+finished 19:52:44
