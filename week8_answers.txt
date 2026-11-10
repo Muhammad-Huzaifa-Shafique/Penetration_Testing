@@ -14,3 +14,209 @@ Searching nomic-embed-text-prefixed: 5 chunk(s)
 
 Answer (on CPU the first words can take a while):
 
+To scan every TCP port, you can use the option `-p-` or `-p all` as mentioned in [3].
+[prompt 1861 tokens, answer 27 tokens, 124s]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (1 of 5 retrieved):
+  [3] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > **Focus Analysis**   (sim 0.833)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/hacktricks/src/generic-methodologies-and-resources/pentesting-network/nmap-summary-esp.md
+      claim   : To scan every TCP port, you can use the option `-p-` or `-p all` as mentioned in [3].
+      passage : To select all 65,335 ports: **-p-** or **-p all**.
+Retrieved but not cited: [1] [2] [4] [5]
+Citation check: no problems found (it checks wording, not truth)
+
+
+Question> What about UDP?
+
+Reading your follow-up against the conversation (one short extra model call)...
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  searched for: "What nmap options scan every UDP port?"   (your follow-up, made standalone)
+  [1] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > **Focus Analysis**   (sim 0.827)
+  [2] generic-methodologies-and-resources/pentesting-network/README > UDP   (sim 0.813)
+  [3] man nmap > PORT SPECIFICATION AND SCAN ORDER   (sim 0.809)
+  [4] man nmap > PORT SCANNING TECHNIQUES   (sim 0.808)
+  [5] man nmap > EXAMPLES   (sim 0.807)
+
+Answer (on CPU the first words can take a while):
+
+To scan UDP ports, you can use the option `-sU` as mentioned in [2]. This option mixes both sending a UDP packet to check for an ICMP unreachable response and sending formatted datagrams to elicit a response from a service.
+[prompt 1802 tokens, answer 50 tokens, 154s, 1 earlier turn(s) remembered]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (1 of 5 retrieved):
+  [2] generic-methodologies-and-resources/pentesting-network/README > UDP   (sim 0.813)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/hacktricks/src/generic-methodologies-and-resources/pentesting-network/README.md
+      claim   : To scan UDP ports, you can use the option `-sU` as mentioned in [2].
+      passage : There are 2 options to scan an UDP port:
+Retrieved but not cited: [1] [3] [4] [5]
+Citation check: 1 thing(s) to look at
+  WARN  [2] does not contain -sU (it is in [4])
+        in: "To scan UDP ports, you can use the option `-sU` as mentioned in [2]."
+  NOTE  1 sentence(s) have no valid [n] (closest passage: [2])
+
+
+Question> Can I scan both in one run?
+
+Reading your follow-up against the conversation (one short extra model call)...
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  searched for: "Can I scan both TCP and UDP ports in one nmap run?"   (your follow-up, made standalone)
+  [1] generic-methodologies-and-resources/pentesting-network/README > UDP   (sim 0.798)
+  [2] man nmap > PORT SPECIFICATION AND SCAN ORDER   (sim 0.797)
+  [3] man nmap > PORT SCANNING TECHNIQUES   (sim 0.795)
+  [4] man nmap > EXAMPLES   (sim 0.786)
+  [5] man nmap > PORT SCANNING TECHNIQUES   (sim 0.785)
+
+Answer (on CPU the first words can take a while):
+
+Yes, you can scan both UDP and TCP ports in one run. According to [2], to scan both UDP and TCP, you have to specify `-sU` and at least one TCP scan type (such as `-sS`, `-sF`, or `-sT`).
+[prompt 1769 tokens, answer 58 tokens, 130s, 2 earlier turn(s) remembered]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (1 of 5 retrieved):
+  [2] man nmap > PORT SPECIFICATION AND SCAN ORDER   (sim 0.797)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/manpages/nmap.man.txt
+      claim   : According to [2], to scan both UDP and TCP, you have to specify `-sU` and at least one TCP scan type (such...
+      passage : Note that to scan both UDP and TCP, you have to specify -sU and at least one TCP scan type (such as -sS, -s...
+Retrieved but not cited: [1] [3] [4] [5]
+Citation check: no problems found (it checks wording, not truth)
+  NOTE  1 sentence(s) have no valid [n] (closest passage: [2])
+
+
+Question> /history
+3 turn(s) so far; the next question carries the last 3.
+  1. Which nmap option scans every TCP port?  ->  To scan every TCP port, you can use the option `-p-` or `...
+  2. What about UDP?  ->  To scan UDP ports, you can use the option `-sU` as mentio...
+  3. Can I scan both in one run?  ->  Yes, you can scan both UDP and TCP ports in one run. Acco...
+
+Question> /reset
+(conversation forgotten)
+
+Question> # conversation 2: a follow-up that names something new
+
+Question> How do I set up SSH local port forwarding?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.812)
+  [2] generic-hacking/tunneling-and-port-forwarding > Port2Port   (sim 0.768)
+  [3] generic-hacking/reverse-shells/full-ttys > ReverseSSH   (sim 0.767)
+  [4] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.763)
+  [5] linux-hardening/linux-basics/linux-privilege-escalation/README > ForwardAgent/AllowAgentForwarding   (sim 0.760)
+
+Answer (on CPU the first words can take a while):
+
+To set up SSH local port forwarding, you can use the `-L` option with the `ssh` command. According to [2], the syntax is:
+
+```bash
+ssh -i ssh_key <user>@<ip_compromised> -L <attacker_port>:<ip_victim>:<remote_port> [-p <ssh_port>] [-N -f]
+```
+
+This will listen on the client and connect to the destination from the SSH server side.
+[prompt 1191 tokens, answer 96 tokens, 87s]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (1 of 5 retrieved):
+  [2] generic-hacking/tunneling-and-port-forwarding > Port2Port   (sim 0.768)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md
+      claim   : According to [2], the syntax is:
+      passage : (nothing close to it in this passage)
+Retrieved but not cited: [1] [3] [4] [5]
+Citation check: no problems found (it checks wording, not truth)
+  NOTE  2 sentence(s) have no valid [n] (closest passage: [2])
+
+
+Question> And the remote version?
+
+Reading your follow-up against the conversation (one short extra model call)...
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  searched for: "What is the syntax for SSH remote port forwarding?"   (your follow-up, made standalone)
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.796)
+  [2] generic-hacking/reverse-shells/full-ttys > ReverseSSH   (sim 0.780)
+  [3] windows-hardening/mythic > Move laterally   (sim 0.764)
+  [4] generic-hacking/reverse-shells/expose-local-to-the-internet > **Serveo**   (sim 0.757)
+  [5] linux-hardening/user-information/ssh-forward-agent-exploitation > Summary   (sim 0.754)
+
+Answer (on CPU the first words can take a while):
+
+To set up SSH local port forwarding, the passage [1] shows the syntax:
+
+```bash
+ssh -R 0.0.0.0:10521:127.0.0.1:1521 user@10.0.0.1 #Local port 1521 accessible in port 10521 from everywhere
+```
+
+However, the passage does not explicitly state how to set up SSH remote port forwarding.
+[prompt 1362 tokens, answer 89 tokens, 155s, 1 earlier turn(s) remembered]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (1 of 5 retrieved):
+  [1] generic-hacking/tunneling-and-port-forwarding > Remote Port2Port   (sim 0.796)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/hacktricks/src/generic-hacking/tunneling-and-port-forwarding.md
+      claim   : To set up SSH local port forwarding, the passage [1] shows the syntax:
+      passage : Open new Port in SSH Server --> Other port
+Retrieved but not cited: [2] [3] [4] [5]
+Citation check: no problems found (it checks wording, not truth)
+
+
+Question> /reset
+(conversation forgotten)
+
+Question> # conversation 3: a decline, then a question that stands alone
+
+Question> How do I make sourdough bread?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] windows-hardening/windows-local-privilege-escalation/seimpersonate-from-high-to-system > Code   (sim 0.582)
+  [2] hardware-physical-access/firmware-analysis/bootloader-testing > U-Boot quick wins and environment abuse   (sim 0.577)
+  [3] macos-hardening/macos-security-and-privilege-escalation/macos-apps-inspecting-debugging-and-fuzzing/arm64-basic-assembly > **Common Instructions (ARM64v8)**   (sim 0.575)
+  [4] binary-exploitation/basic-stack-binary-exploitation-methodology/tools/README > Core dumps   (sim 0.573)
+  [5] macos-hardening/macos-security-and-privilege-escalation/macos-files-folders-and-binaries/universal-binaries-and-mach-o-format > Fat Header   (sim 0.573)
+
+Answer (on CPU the first words can take a while):
+
+I'm afraid I won't be able to help with that question. The passages provided are related to security testing, penetration testing, and macOS and Windows internals, but none of them mention sourdough bread or baking.
+[prompt 1667 tokens, answer 45 tokens, 123s]
+
+------------------------------------------------------------------------------
+Sources cited in the answer: none
+Citation check: 3 thing(s) to look at
+  WARN  no citation, and little of it is in any passage (best: [2], 20%); maybe from memory
+        in: "I'm afraid I won't be able to help with that question."
+  WARN  no citation, and little of it is in any passage (best: [1], 8%); maybe from memory
+        in: "The passages provided are related to security testing, penetration testing, and macOS a..."
+  WARN  the answer cites no passage, so none of it is backed by a source
+
+
+Question> Which nmap option scans every TCP port?
+
+Reading your follow-up against the conversation (one short extra model call)...
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] man nmap > EXAMPLES   (sim 0.846)
+  [2] man nmap > PORT SPECIFICATION AND SCAN ORDER   (sim 0.833)
+  [3] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > **Focus Analysis**   (sim 0.833)
+  [4] man nmap > PORT SCANNING BASICS   (sim 0.822)
+  [5] man nmap > HOST DISCOVERY   (sim 0.816)
+
+Answer (on CPU the first words can take a while):
+
+To scan every TCP port, you can use the option `-p-` or `-p all` as mentioned in [2] or [3].
+[prompt 1988 tokens, answer 31 tokens, 149s, 1 earlier turn(s) remembered]
+
+------------------------------------------------------------------------------
+Sources cited in the answer (2 of 5 retrieved):
+  [2] man nmap > PORT SPECIFICATION AND SCAN ORDER   (sim 0.833)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/manpages/nmap.man.txt
+      claim   : To scan every TCP port, you can use the option `-p-` or `-p all` as mentioned in [2] or [3].
+      passage : -p port ranges (Only scan specified ports) This option specifies which ports you want to scan and overrides...
+  [3] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > **Focus Analysis**   (sim 0.833)
+      file    : /home/huzai/projects/PenetrationTesting/corpus/hacktricks/src/generic-methodologies-and-resources/pentesting-network/nmap-summary-esp.md
+      claim   : To scan every TCP port, you can use the option `-p-` or `-p all` as mentioned in [2] or [3].
+      passage : To select all 65,335 ports: **-p-** or **-p all**.
+Retrieved but not cited: [1] [4] [5]
+Citation check: no problems found (it checks wording, not truth)
+
+
+Question> 
