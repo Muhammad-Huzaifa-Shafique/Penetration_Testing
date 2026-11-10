@@ -20,9 +20,11 @@ Week 7 (citecheck.py): under every answer it prints only the passages the answer
 cited, with the file each came from, and flags citations that do not check out.
 
 Week 8 (conversation.py): the interactive chat remembers the last few turns. A follow-up such
-as "what about UDP?" is first rewritten into a standalone question for the search, and the
-earlier turns travel with the new question to the model. '/reset' forgets, '/history' shows
-what is remembered. A single question (-q) is still asked on its own, exactly as in Week 7.
+as "what about UDP?" is first rewritten into a standalone question, using the earlier turns to
+work out what it means. The search and the model are then given that question, as if it had
+been typed on its own (ANSWER_SEES_HISTORY, below, says why the model is not also shown the
+earlier turns). '/reset' forgets, '/history' shows what is remembered. A single question (-q)
+is still asked on its own, exactly as in Week 7.
 
 Later weeks can import it:   from answer import ask
 (Week 11 calls ask() in a loop over the answer key, without history, so every question is
@@ -77,8 +79,18 @@ TEMPERATURE = 0.2
 KEEP_ALIVE = "30m"
 
 # Week 8: how much of the conversation the chat remembers. The oldest turns are dropped first.
-HISTORY_TURNS = 3      # earlier question/answer pairs sent with a new question (0 = no memory)
+HISTORY_TURNS = 3      # earlier question/answer pairs the chat remembers (0 = no memory)
 HISTORY_CHARS = 4000   # ...and never more than about this many characters of them
+
+# Week 8, after the first real test: once a follow-up has been rewritten into a standalone
+# question, should the model that writes the answer also be shown the earlier turns?
+#   False (default)  No. It is asked the standalone question and gets the same prompt as a
+#                    question typed on its own. In a real test it copied from the earlier
+#                    answer (a command template, once a whole sentence) when it could see it.
+#   True             Yes, as in the first Week 8 version.
+# With --no-rewrite the earlier turns are always shown: then they are the only way the model
+# can tell what the follow-up means.
+ANSWER_SEES_HISTORY = False
 
 # How answer.py finds things on a Hit / in retrieve()'s signature. If your Week 5
 # code names them differently, add the name here (first match wins).
@@ -312,12 +324,18 @@ def ask(query, embedder=None, k=None, on_hits=None, on_token=None,
     history        earlier (question, answer) pairs, oldest first. ask() only reads it; the caller
                    adds the new pair. None (the default) asks the question on its own, which is
                    how Week 11 should call it.
-    rewrite        with history, first turn the follow-up into a standalone question for the
-                   search (False searches with the words as typed).
+    rewrite        with history, first turn the follow-up into a standalone question. The search
+                   and the model are both given that question (False: both get the words as
+                   typed, and the model is shown the earlier turns instead).
     on_search(q)   is called with the question the search will use, before retrieval starts.
     """
     earlier = conversation.recent(history, HISTORY_TURNS, HISTORY_CHARS)
     search_query = rewrite_query(query, earlier) if earlier and rewrite else query
+    # The model is asked the question the search used, so a follow-up reaches it already
+    # standalone. It is shown the earlier turns only when nothing was rewritten (--no-rewrite)
+    # or when ANSWER_SEES_HISTORY is switched on.
+    asked = search_query
+    shown = history if ANSWER_SEES_HISTORY or not (earlier and rewrite) else None
     if on_search:
         on_search(search_query)
     hits = list(call_retrieve(search_query, embedder, k) or [])
@@ -335,7 +353,7 @@ def ask(query, embedder=None, k=None, on_hits=None, on_token=None,
     try:
         stream = ollama.chat(
             model=CHAT_MODEL,
-            messages=build_messages(query, hits, history),
+            messages=build_messages(asked, hits, shown),
             options={"num_ctx": NUM_CTX, "temperature": TEMPERATURE},
             keep_alive=KEEP_ALIVE,
             stream=True,
