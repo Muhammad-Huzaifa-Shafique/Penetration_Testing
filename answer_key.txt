@@ -1,5 +1,7 @@
 # Casefile answer key (Week 9). Written with AI help (Claude) from the text of corpus/chunks.jsonl.
-# Reviewed by the project owner on 2026-11-10.
+# Owner review: NOT DONE YET. After reading every entry, change this line to "Reviewed by the project owner on <date>".
+# AI check: on 2026-11-10, at the owner's request, Claude re-checked every answer claim by claim
+# against the corpus text (this is the third version of the key).
 # Check it with:   python check_key.py
 #
 # One block per question; each block starts with an id: line.
@@ -32,13 +34,17 @@
 # one of the twelve smoke-test topics of Weeks 5 to 8. q01 and q20 are decline questions:
 # the corpus does not hold the answer. After the first version was installed, every answer
 # was re-read against the passage it cites, and the sentences the passage does not support
-# were cut or reworded (this is the second version of the key).
+# were cut or reworded (second version). A third pass, at the owner's request, checked every
+# command, flag, number and quote automatically against the whole cited file and re-read each
+# claim: a few imprecise sentences were tightened, the question of q20 (which pointed at
+# nothing) was reworded, and some must: texts were loosened so that a correct answer is not
+# failed for its wording (this is the third version of the key).
 
 id: q01
 question: what is ethical hacking
 expect: decline
 answer:
-The corpus does not define ethical hacking. Its only mention of the phrase is one passing reference to "ethical hackers" in the description of the StaCoAn mobile-app analysis tool. The right response is to say the passages do not cover this, not to answer it from general knowledge.
+The corpus does not define ethical hacking. Its only mention of the phrase is one passing reference to "ethical hackers" in the description of the StaCoAn mobile-app analysis tool (the run-together word "ethicalhacking" also appears inside a LinkedIn link in a reference list). The right response is to say the passages do not cover this, not to answer it from general knowledge.
 
 id: q02
 question: what does the -k flag do in curl, and why would I avoid using it normally?
@@ -46,7 +52,7 @@ expect: answer
 source: corpus/manpages/curl.man.txt
 evidence: By default, every secure connection curl makes is verified
 evidence: using this option makes the transfer insecure
-must: --insecure
+must: insecure
 answer:
 `-k`, `--insecure` makes curl skip the verification step of a secure connection and proceed without checking. Normally, for TLS, curl verifies that the server's certificate contains the right name for the host in the URL and has been signed by a CA certificate in the cert store; for SFTP and SCP the option makes curl skip the known_hosts verification instead. The man page warns that using this option makes the transfer insecure, which is the reason to avoid it normally.
 
@@ -65,7 +71,7 @@ question: what does sudo -l show me about my own account?
 expect: answer
 source: corpus/manpages/sudo.man.txt
 evidence: If no command is specified, list the privileges for the
-must: -l, --list
+must: -l
 answer:
 With no command given, `sudo -l` lists the privileges for the invoking user (or the user named with `-U`) on the current host. Giving `-l` more than once uses a longer, more verbose format if the security policy supports it. If a command is named and the policy permits it, sudo displays the command's fully-qualified path along with any arguments; if the command is named but not allowed, sudo exits with status 1.
 
@@ -76,7 +82,7 @@ source: corpus/manpages/hashcat.man.txt
 evidence: Hash-type, see references below
 evidence: Hash types
 evidence: 3 = Brute-force
-must: -m, --hash-type
+must: -m
 answer:
 `-m`, `--hash-type=NUM` selects the hash type by number. The option itself is documented only as "Hash-type, see references below"; the reference is the man page's "Hash types" list, which maps numbers to hash types (it begins 0 = MD5, 10 = md5($pass.$salt), 20 = md5($salt.$pass)). Next to it, `-a`, `--attack-mode=NUM` selects the attack mode, whose reference lists 0 = Straight, 1 = Combination, 3 = Brute-force, 6 = Hybrid Wordlist + Mask and 7 = Hybrid Mask + Wordlist.
 
@@ -106,7 +112,7 @@ expect: answer
 source: corpus/manpages/ss.man.txt
 evidence: used to dump socket statistics
 evidence: similar to netstat
-must: socket statistics
+must: socket
 answer:
 `ss` is used to dump socket statistics. It shows information similar to `netstat`; the man page says it can display more TCP and state information than other tools.
 
@@ -119,7 +125,7 @@ evidence: You can search binaries with capabilities using getcap -r
 evidence: -r  enables recursive search.
 must: getcap -r
 answer:
-Run `getcap -r / 2>/dev/null`. `getcap` displays the name and capabilities of each specified file, and `-r` enables recursive search, so pointing it at `/` searches the whole filesystem. HackTricks gives this command under "search binaries with capabilities", and shows `getcap /usr/bin/ping` printing `/usr/bin/ping = cap_net_raw+ep` as an example of a result.
+Run `getcap -r / 2>/dev/null`. `getcap` displays the name and capabilities of each specified file, and `-r` enables recursive search, so pointing it at `/` searches the whole filesystem. HackTricks introduces this command with "You can search binaries with capabilities using getcap -r", and its example shows `getcap /usr/bin/ping` printing `/usr/bin/ping = cap_net_raw+ep`.
 
 id: q10
 question: after getting a basic reverse shell, how do I upgrade it to a full interactive TTY?
@@ -127,7 +133,6 @@ expect: answer
 source: corpus/hacktricks/src/generic-hacking/reverse-shells/full-ttys.md
 evidence: pty.spawn("/bin/bash")
 evidence: stty raw -echo; fg
-must: pty.spawn
 must: stty raw -echo
 answer:
 First give the shell a pseudo-terminal: `python3 -c 'import pty; pty.spawn("/bin/bash")'` (or `script /dev/null -qc /bin/bash`). Then suspend it with Ctrl+Z and, in your own terminal, run `stty raw -echo; fg` to bring it back in raw mode. Inside the shell, set `export SHELL=/bin/bash`, `export TERM=screen`, match your real terminal size with `stty rows <n> columns <n>` (read your own values first with `stty -a`), then run `reset`.
@@ -138,9 +143,9 @@ expect: answer
 source: corpus/hacktricks/src/pentesting-web/ssti-server-side-template-injection/README.md
 evidence: fuzzing the template
 evidence: {{7*7}}
-must: SSTI
+must: template
 answer:
-Start by fuzzing the template: inject a short sequence of special characters and compare the response to normal input. Signs of a hit are thrown errors that reveal the template engine, or the payload (or part of it) disappearing from the reflection instead of being echoed back unchanged. In a plain-text context, check whether an expression such as `{{7*7}}` or `${7*7}` is actually evaluated, which separates it from ordinary XSS; in a code context, change an input value and see whether the output changes to match, which shows the server is evaluating it rather than just echoing it.
+Start by fuzzing the template: inject a sequence of special characters and compare the server's response to regular data with its response to this special payload. Signs of a hit are thrown errors (which reveal the vulnerability and potentially the template engine), or the payload being absent from the reflection or parts of it missing, which implies the server processes it differently than regular data. In a plain-text context, distinguish it from XSS by checking whether the server evaluates template expressions such as `{{7*7}}` or `${7*7}`; in a code context, confirm it by altering input parameters, for instance changing `greeting` in `http://vulnerable-website.com/?greeting=data.username` to see whether the server's output is dynamic or fixed, as in `greeting=data.username}}hello` returning the username.
 
 id: q12
 question: what does the HttpOnly flag on a cookie protect against?
@@ -150,7 +155,7 @@ evidence: prevents client-side JavaScript from reading the cookie
 evidence: returns cookies in the response body
 must: HttpOnly
 answer:
-It prevents client-side JavaScript from reading the cookie through APIs such as `document.cookie`. The next section of the page, "Bypasses", lists circumstances where HttpOnly cookies were still exposed or overwritten, for example a page that returns cookies in its response body (such as a phpinfo() page).
+It prevents client-side JavaScript from reading the cookie through APIs such as `document.cookie`. The next section of the page, "Bypasses", lists ways around it: if a page returns cookies in its response body (for example a phpinfo() page), XSS may fetch that page and steal the reflected cookie despite HttpOnly, and it is possible to overwrite HttpOnly cookies with a Cookie Jar overflow attack.
 
 id: q13
 question: how do I ask a DNS server for a full copy of a domain's records in one request?
@@ -160,7 +165,7 @@ evidence: AXFR is the DNS mechanism for transferring a complete zone
 evidence: dig axfr @<DNS_IP> <DOMAIN>
 must: AXFR
 answer:
-This is a zone transfer. HackTricks describes AXFR as the DNS mechanism for transferring a complete zone from an authoritative server, and gives two commands: `dig axfr @<DNS_IP> <DOMAIN>` (try a zone transfer, guessing the domain) and `dig axfr @<DNS_IP>` (try one without naming the domain).
+This is a zone transfer. HackTricks describes AXFR as the DNS mechanism for transferring a complete zone from an authoritative server. Its `dig` examples are `dig axfr @<DNS_IP> <DOMAIN>` (commented "Try zone transfer guessing the domain") and `dig axfr @<DNS_IP>` (commented "Try zone transfer without domain").
 
 id: q14
 question: what is the DCSync technique in Active Directory, and which permissions does an account need to use it?
@@ -190,7 +195,7 @@ source: corpus/hacktricks/src/generic-methodologies-and-resources/pentesting-met
 evidence: Do you have physical access to the machine
 must: physical access
 answer:
-Whether you have physical access to the machine you want to attack. The page treats that as step 0, before any network-based step, pointing to separate notes on physical attacks and on escaping from GUI applications. After that it splits by whether the test is internal (finding hosts inside the company network) or external (finding the company's assets on the internet).
+Whether you have physical access to the machine you want to attack. The page lists it as step 0 ("0- Physical Attacks"), ahead of step 1 (discovering hosts inside the network or the company's assets), and points to separate notes on physical attacks and on escaping from GUI applications. Step 1 then depends on whether the test is internal (finding hosts inside the company network) or external (finding assets of the company on the internet).
 
 id: q17
 question: what command-line tools does the corpus mention for enumerating a company's subdomains?
@@ -201,7 +206,7 @@ evidence: subfinder
 must: amass
 must: subfinder
 answer:
-The page's OSINT section says the fastest way to get many subdomains is to search external sources, and lists tools for it (configure their API keys for better results): BBOT, Amass (`amass enum -d <domain>`; the page also shows optional `-active` and `-ip` flags, and piping the output through grep to list just the subdomains) and subfinder, followed by others such as findomain, OneForAll and assetfinder. One BBOT example adds the `naabu` and `gowitness` modules to the subdomain-enum run.
+The page's OSINT section says the fastest way to get many subdomains is to search external sources, and lists tools for it (configure their API keys for better results): BBOT, Amass (the page's example is `amass enum [-active] [-ip] -d tesla.com`, followed by a line that pipes the output through grep to list just the subdomains) and subfinder, followed by others such as findomain, OneForAll and assetfinder. One BBOT example adds the `naabu` and `gowitness` modules to the subdomain-enum run.
 
 id: q18
 question: what do the different flags on "adb install" do?
@@ -224,7 +229,7 @@ answer:
 `spctl --status` shows the status of Gatekeeper (`spctl` is the command-line tool for enumerating and interacting with Gatekeeper). To check whether a particular app would be allowed by Gatekeeper, run `spctl --assess -v /Applications/App.app`. HackTricks also notes that Gatekeeper's signature checks are performed only on files with the Quarantine attribute, not on every file, and that `syspolicyd` is the main daemon responsible for enforcing Gatekeeper, maintaining a database located in `/var/db/SystemPolicy`.
 
 id: q20
-question: how do I write a snort rule to detect this kind of traffic?
+question: how do I write a snort rule to detect port scans?
 expect: decline
 answer:
 The corpus has no Snort content at all: no man page, and no HackTricks mention. It does cover Suricata, a different IDS/IPS engine, in a few pages, so if the question meant any network intrusion-detection tool, the right response is to say Snort specifically is not covered and offer what the corpus says about Suricata instead of guessing at Snort's rule syntax.
