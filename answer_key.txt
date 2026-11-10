@@ -30,7 +30,9 @@
 # answer explains a concept or a tool option and names where the corpus supports it; it
 # does not chain several techniques into a ready attack script. None of the questions is
 # one of the twelve smoke-test topics of Weeks 5 to 8. q01 and q20 are decline questions:
-# the corpus does not hold the answer.
+# the corpus does not hold the answer. After the first version was installed, every answer
+# was re-read against the passage it cites, and the sentences the passage does not support
+# were cut or reworded (this is the second version of the key).
 
 id: q01
 question: what is ethical hacking
@@ -46,7 +48,7 @@ evidence: By default, every secure connection curl makes is verified
 evidence: using this option makes the transfer insecure
 must: --insecure
 answer:
-`-k`, `--insecure` makes curl skip the TLS certificate verification it would normally do (checking the name and the signing CA) and proceed anyway. The man page notes it also skips known_hosts checking for SFTP and SCP, and warns in capitals that using it makes the transfer insecure.
+`-k`, `--insecure` makes curl skip the verification step of a secure connection and proceed without checking. Normally, for TLS, curl verifies that the server's certificate contains the right name for the host in the URL and has been signed by a CA certificate in the cert store; for SFTP and SCP the option makes curl skip the known_hosts verification instead. The man page warns that using this option makes the transfer insecure, which is the reason to avoid it normally.
 
 id: q03
 question: what does nmap's -Pn option do and when would I use it?
@@ -56,7 +58,7 @@ evidence: This option skips the host discovery stage altogether
 evidence: all 65,536 IP addresses are scanned
 must: -Pn
 answer:
-`-Pn` skips host discovery (the ping stage) entirely and treats every target address as if it were up, so Nmap runs its requested scans (port scan, version detection, OS detection) against all of them. It is useful when a firewall would otherwise make a live host look down. Default timing is still used, so a scan with -Pn on a large range can be slower, and it can be combined with -sn to skip both discovery and the port scan while still allowing scripts to run.
+`-Pn` skips the host discovery stage altogether. Normally Nmap uses that stage to determine active machines for heavier scanning and to gauge the speed of the network, and only runs heavy probing such as port scans, version detection or OS detection against hosts found to be up. With `-Pn` it attempts the requested scanning functions against every target IP address, as if each one were active, so a /16 network means all 65,536 addresses are scanned. Default timing parameters are used, which may result in slower scans. To skip host discovery and the port scan while still allowing NSE to run, use `-Pn -sn` together. The passage describes what `-Pn` does rather than when to use it; the text just before it notes that hosts could be missed when a firewall drops probes or their responses.
 
 id: q04
 question: what does sudo -l show me about my own account?
@@ -65,16 +67,18 @@ source: corpus/manpages/sudo.man.txt
 evidence: If no command is specified, list the privileges for the
 must: -l, --list
 answer:
-With no command given, `sudo -l` lists what the invoking user (or the user named with -U) is allowed to run as another user on the current host. Giving -l more than once asks for a longer, more verbose format if the configured security policy supports it. If a specific command is named, it instead reports whether that command is permitted and, if so, prints its fully-qualified path.
+With no command given, `sudo -l` lists the privileges for the invoking user (or the user named with `-U`) on the current host. Giving `-l` more than once uses a longer, more verbose format if the security policy supports it. If a command is named and the policy permits it, sudo displays the command's fully-qualified path along with any arguments; if the command is named but not allowed, sudo exits with status 1.
 
 id: q05
 question: what does the -m option configure in hashcat?
 expect: answer
 source: corpus/manpages/hashcat.man.txt
 evidence: Hash-type, see references below
+evidence: Hash types
+evidence: 3 = Brute-force
 must: -m, --hash-type
 answer:
-`-m`, `--hash-type=NUM` tells hashcat which hash algorithm the input file uses (its numeric hash-mode code), which hashcat needs in order to crack it correctly. It is paired with `-a`, `--attack-mode=NUM`, which selects how candidate passwords are generated (wordlist, brute force, combinator, and so on).
+`-m`, `--hash-type=NUM` selects the hash type by number. The option itself is documented only as "Hash-type, see references below"; the reference is the man page's "Hash types" list, which maps numbers to hash types (it begins 0 = MD5, 10 = md5($pass.$salt), 20 = md5($salt.$pass)). Next to it, `-a`, `--attack-mode=NUM` selects the attack mode, whose reference lists 0 = Straight, 1 = Combination, 3 = Brute-force, 6 = Hybrid Wordlist + Mask and 7 = Hybrid Mask + Wordlist.
 
 id: q06
 question: what does wget's --mirror option turn on?
@@ -84,7 +88,7 @@ evidence: Turn on options suitable for mirroring
 evidence: equivalent to -r -N -l inf --no-remove-listing
 must: --mirror
 answer:
-`-m`, `--mirror` is shorthand for a set of options suitable for mirroring a whole site: it turns on recursive download, timestamping (so re-running it only fetches changed files), sets the recursion depth to infinite, and keeps FTP directory listings. The man page states it is currently equivalent to `-r -N -l inf --no-remove-listing`.
+`-m`, `--mirror` turns on options suitable for mirroring: it turns on recursion and time-stamping, sets infinite recursion depth and keeps FTP directory listings. The man page says it is currently equivalent to `-r -N -l inf --no-remove-listing`.
 
 id: q07
 question: what does the whatweb tool actually identify on a website?
@@ -94,7 +98,7 @@ evidence: WhatWeb recognises web technologies
 evidence: WhatWeb has over 1800 plugins
 must: WhatWeb
 answer:
-WhatWeb fingerprints a website's technology: content management systems, blogging platforms, analytics packages, JavaScript libraries, web servers and embedded devices, plus version numbers, email addresses, account IDs and SQL errors when it finds them. It has over 1,800 plugins for this. Its default "passive" aggression level needs only one HTTP request and is meant for scanning public sites; more aggressive levels exist for penetration tests.
+WhatWeb identifies websites (its goal is to answer "What is that Website?"). It recognises web technologies including content management systems (CMS), blogging platforms, statistics/analytics packages, JavaScript libraries, web servers and embedded devices, and it also identifies version numbers, email addresses, account IDs, web framework modules and SQL errors. It has over 1800 plugins, each to recognise something different. Its default aggression level, "passive", is the fastest and needs only one HTTP request, which suits scanning public websites; more aggressive modes were developed for penetration tests.
 
 id: q08
 question: what does the ss command show, and how is it different from netstat?
@@ -104,7 +108,7 @@ evidence: used to dump socket statistics
 evidence: similar to netstat
 must: socket statistics
 answer:
-`ss` dumps socket statistics: open connections and their state, similar to what `netstat` shows. The man page says it can display more TCP and state information than other tools.
+`ss` is used to dump socket statistics. It shows information similar to `netstat`; the man page says it can display more TCP and state information than other tools.
 
 id: q09
 question: how do I search a whole Linux filesystem for binaries that have Linux capabilities set?
@@ -115,7 +119,7 @@ evidence: You can search binaries with capabilities using getcap -r
 evidence: -r  enables recursive search.
 must: getcap -r
 answer:
-Run `getcap -r / 2>/dev/null`. `getcap` displays the name and capabilities of each file it is given, and `-r` makes that recursive, so pointing it at `/` lists every capability-carrying binary on the system. HackTricks shows `getcap /usr/bin/ping` on its own printing `/usr/bin/ping = cap_net_raw+ep` as an example of what a result looks like.
+Run `getcap -r / 2>/dev/null`. `getcap` displays the name and capabilities of each specified file, and `-r` enables recursive search, so pointing it at `/` searches the whole filesystem. HackTricks gives this command under "search binaries with capabilities", and shows `getcap /usr/bin/ping` printing `/usr/bin/ping = cap_net_raw+ep` as an example of a result.
 
 id: q10
 question: after getting a basic reverse shell, how do I upgrade it to a full interactive TTY?
@@ -143,9 +147,10 @@ question: what does the HttpOnly flag on a cookie protect against?
 expect: answer
 source: corpus/hacktricks/src/pentesting-web/hacking-with-cookies/README.md
 evidence: prevents client-side JavaScript from reading the cookie
+evidence: returns cookies in the response body
 must: HttpOnly
 answer:
-It stops client-side JavaScript from reading that cookie through APIs such as `document.cookie`, so a basic cross-site-scripting payload that just reads `document.cookie` cannot see it. HackTricks notes this is one layer, not a complete fix, and lists a few specific circumstances (for example a page that echoes cookies back in its own response body) where the protection has still been worked around.
+It prevents client-side JavaScript from reading the cookie through APIs such as `document.cookie`. The next section of the page, "Bypasses", lists circumstances where HttpOnly cookies were still exposed or overwritten, for example a page that returns cookies in its response body (such as a phpinfo() page).
 
 id: q13
 question: how do I ask a DNS server for a full copy of a domain's records in one request?
@@ -155,7 +160,7 @@ evidence: AXFR is the DNS mechanism for transferring a complete zone
 evidence: dig axfr @<DNS_IP> <DOMAIN>
 must: AXFR
 answer:
-This is a zone transfer (AXFR), the DNS mechanism for transferring a whole zone from an authoritative server. The command is `dig axfr @<DNS_IP> <DOMAIN>` (or `dig axfr @<DNS_IP>` to try it without naming the domain). It only succeeds if the server is misconfigured to allow transfers to anyone; a properly configured DNS server restricts AXFR to its own secondary servers.
+This is a zone transfer. HackTricks describes AXFR as the DNS mechanism for transferring a complete zone from an authoritative server, and gives two commands: `dig axfr @<DNS_IP> <DOMAIN>` (try a zone transfer, guessing the domain) and `dig axfr @<DNS_IP>` (try one without naming the domain).
 
 id: q14
 question: what is the DCSync technique in Active Directory, and which permissions does an account need to use it?
@@ -165,7 +170,7 @@ evidence: simulates the behavior of a Domain Controller
 evidence: Domain Admins, Enterprise Admins, Administrators, and Domain Controllers
 must: Domain Controller
 answer:
-DCSync simulates the behavior of a Domain Controller: the requesting account asks other domain controllers to replicate directory information to it, over the normal replication protocol (MS-DRSR), which cannot simply be disabled because real domain controllers depend on it. Doing this for real needs replication rights on the domain, specifically DS-Replication-Get-Changes together with DS-Replication-Get-Changes-All; by default only the Domain Admins, Enterprise Admins, Administrators and Domain Controllers groups hold them, so finding those rights on an unexpected account is a sign permissions were delegated too broadly.
+DCSync simulates the behavior of a Domain Controller and asks other Domain Controllers to replicate information, using the Directory Replication Service Remote Protocol (MS-DRSR). Because MS-DRSR is a valid and necessary function of Active Directory, it cannot be turned off or disabled. A full DCSync needs the DS-Replication-Get-Changes and DS-Replication-Get-Changes-All permissions on the domain naming context; by default only the Domain Admins, Enterprise Admins, Administrators and Domain Controllers groups have the required privileges.
 
 id: q15
 question: what is a padding oracle, and what makes a system vulnerable to one?
@@ -173,9 +178,10 @@ expect: answer
 source: corpus/hacktricks/src/crypto/symmetric/README.md
 evidence: different errors/timings for bad padding
 evidence: you may have a padding oracle
+evidence: if the server reveals (directly or indirectly) whether decrypted plaintext has valid PKCS#7 padding
 must: padding oracle
 answer:
-A padding oracle is a system that unintentionally tells an attacker whether a piece of ciphertext decrypted to validly padded plaintext, through a different error message, response code, or timing for the valid and invalid cases. It matters most for CBC mode because CBC is malleable: flipping bits in one ciphertext block flips predictable bits in the next block's plaintext. An attacker who can repeatedly ask "was the padding valid?" can use that oracle to recover the plaintext.
+A padding oracle exists when, in CBC mode, the server reveals (directly or indirectly) whether decrypted plaintext has valid PKCS#7 padding. The oracle can be a specific error message, a different HTTP status or response size, or a timing difference. With one you can often decrypt ciphertext without the key, or construct a ciphertext that decrypts to chosen plaintext when you can submit crafted preceding blocks or IVs and the application accepts the resulting validly padded message. In short, a system is exposed if it lets a client tell valid padding from invalid padding.
 
 id: q16
 question: according to the corpus's general pentesting methodology page, what is the very first thing to check before anything else?
@@ -184,7 +190,7 @@ source: corpus/hacktricks/src/generic-methodologies-and-resources/pentesting-met
 evidence: Do you have physical access to the machine
 must: physical access
 answer:
-Whether you have physical access to the target machine. The page treats that as step 0, before any network-based step, pointing to separate notes on physical attacks and on escaping restricted GUI applications. After that it splits by whether the engagement is internal (finding hosts already inside the network) or external (finding the company's internet-facing assets first).
+Whether you have physical access to the machine you want to attack. The page treats that as step 0, before any network-based step, pointing to separate notes on physical attacks and on escaping from GUI applications. After that it splits by whether the test is internal (finding hosts inside the company network) or external (finding the company's assets on the internet).
 
 id: q17
 question: what command-line tools does the corpus mention for enumerating a company's subdomains?
@@ -195,7 +201,7 @@ evidence: subfinder
 must: amass
 must: subfinder
 answer:
-It names Amass (`amass enum -d <domain>`) and subfinder, alongside a broader "bbot" pipeline that can chain subdomain enumeration together with port scanning and screenshotting. These are passive, OSINT-style tools: they query existing public records rather than touching the target directly.
+The page's OSINT section says the fastest way to get many subdomains is to search external sources, and lists tools for it (configure their API keys for better results): BBOT, Amass (`amass enum -d <domain>`; the page also shows optional `-active` and `-ip` flags, and piping the output through grep to list just the subdomains) and subfinder, followed by others such as findomain, OneForAll and assetfinder. One BBOT example adds the `naabu` and `gowitness` modules to the subdomain-enum run.
 
 id: q18
 question: what do the different flags on "adb install" do?
@@ -205,7 +211,7 @@ evidence: replace existing application
 evidence: forward lock application
 must: adb install
 answer:
-`adb install test.apk` installs an APK on the connected device or emulator. The flags change that: `-l` forward-locks the app, `-r` replaces an existing install, `-t` allows a test package, `-s` installs to the SD card, `-d` allows a version downgrade, and `-p` does a partial install.
+`adb install test.apk` installs the APK. HackTricks lists these flags for it: `-l` forward lock application, `-r` replace existing application, `-t` allow test packages, `-s` install application on sdcard, `-d` allow version code downgrade, and `-p` partial application install.
 
 id: q19
 question: how do I check whether macOS Gatekeeper is enabled, and whether it would let a particular app run?
@@ -215,7 +221,7 @@ evidence: spctl --status
 evidence: spctl --assess -v /Applications/App.app
 must: spctl
 answer:
-`spctl --status` reports whether Gatekeeper's checks are turned on. To test one specific app, `spctl --assess -v /Applications/App.app` reports whether Gatekeeper would allow it to run. HackTricks notes Gatekeeper's signature check applies only to files carrying the quarantine attribute, not to every file, and that `syspolicyd` is the daemon that actually enforces the policy from a database under `/var/db/SystemPolicy`.
+`spctl --status` shows the status of Gatekeeper (`spctl` is the command-line tool for enumerating and interacting with Gatekeeper). To check whether a particular app would be allowed by Gatekeeper, run `spctl --assess -v /Applications/App.app`. HackTricks also notes that Gatekeeper's signature checks are performed only on files with the Quarantine attribute, not on every file, and that `syspolicyd` is the main daemon responsible for enforcing Gatekeeper, maintaining a database located in `/var/db/SystemPolicy`.
 
 id: q20
 question: how do I write a snort rule to detect this kind of traffic?
