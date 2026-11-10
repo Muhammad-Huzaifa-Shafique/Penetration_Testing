@@ -1,0 +1,16 @@
+Casefile -- searching nomic-embed-text-prefixed. Ask a pentesting question; follow-ups are remembered.
+'/reset' forgets the conversation, '/history' shows it, 'quit' or Ctrl-D exits.
+
+Question> # conversation 1: follow-ups that mean nothing on their own
+
+Question> Which nmap option scans every TCP port?
+
+Searching nomic-embed-text-prefixed: 5 chunk(s)
+  [1] man nmap > EXAMPLES   (sim 0.846)
+  [2] man nmap > PORT SPECIFICATION AND SCAN ORDER   (sim 0.833)
+  [3] generic-methodologies-and-resources/pentesting-network/nmap-summary-esp > **Focus Analysis**   (sim 0.833)
+  [4] man nmap > PORT SCANNING BASICS   (sim 0.822)
+  [5] man nmap > HOST DISCOVERY   (sim 0.816)
+
+Answer (on CPU the first words can take a while):
+
