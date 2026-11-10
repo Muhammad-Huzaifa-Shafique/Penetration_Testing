@@ -1,0 +1,34 @@
+# Casefile answer key (Week 9). Written by hand, with no AI help.
+# Check it with:   python check_key.py
+#
+# One block per question; each block starts with an id: line.
+# Field names start at the beginning of a line. Lines that start with # are skipped.
+#
+#   id:        required. A short label you never reuse or renumber (q01, q02, ...).
+#              Weeks 10 and 11 match their results to the key by this label.
+#   question:  required. One line, exactly as you would type it into Casefile.
+#   expect:    answer (the default) or decline (the corpus does not hold the
+#              answer, so the right response is to say so).
+#   source:    the corpus file that holds the answer, as grep prints it
+#              (corpus/... is fine). Repeat the line for each extra file.
+#              Required unless expect is decline.
+#   evidence:  optional. A short phrase copied exactly from that file, from one
+#              line of it. Week 10 can count a search as a hit when a retrieved
+#              chunk contains it. Repeat the line for each extra place.
+#   must:      optional. Short text that a correct answer has to contain, such
+#              as a flag or a number. One per line.
+#   answer:    required. Your expected answer in your own words. It can run over
+#              several lines and ends at the next id: or field name. To start an
+#              answer line with a field name or a #, indent it.
+#
+# Find each source by reading the corpus yourself (grep, less), not with
+# retrieve.py or answer.py, so the key does not depend on what Casefile finds.
+
+id: q01
+question: <your question>
+expect: answer
+source: <corpus file>
+evidence: <a phrase copied from that file>
+must: <text a correct answer must contain>
+answer:
+<your expected answer>
