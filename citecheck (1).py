@@ -141,7 +141,9 @@ def _brackets(numbers):
 _FENCE = "```"
 _ROUND_BULLET = chr(0x2022)   # written as chr() so this file stays plain ASCII
 _ELLIPSIS = chr(0x2026)
-_BULLET = re.compile(r"^\s*(?:[*" + _ROUND_BULLET + r"-]|\d+[.)])\s+")
+# A list item starts with a SHORT number ("1." or "12)"). A man page wraps its lines, so a line can
+# also start with a long number and a full stop ("65535. Scanning port zero ..."): that is not a list.
+_BULLET = re.compile(r"^\s*(?:[*" + _ROUND_BULLET + r"-]|\d{1,2}[.)])\s+")
 _SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[A-Z`\"'(*])")
 _DECLINE = re.compile(
     r"\b(?:do(?:es)?\s+not|don'?t|doesn'?t|cannot|can'?t|could\s+not|couldn'?t|unable\s+to|fail(?:s|ed)?\s+to)\b"
@@ -206,7 +208,7 @@ def closest(sentence, passage, floor=0.15):
     want = tokens(_body(sentence))
     want_weight = sum(_weight(t) for t in want)
     best, best_score = "", 0.0
-    for para in re.split(r"\n\s*\n|\n(?=\s*(?:[-*" + _ROUND_BULLET + r"]|\d+[.)])\s)", passage):
+    for para in re.split(r"\n\s*\n|\n(?=\s*(?:[-*" + _ROUND_BULLET + r"]|\d{1,2}[.)])\s)", passage):
         for cand in re.split(r"(?<=[.!?])\s+", " ".join(para.split())):
             cand = _BULLET.sub("", cand)
             have = tokens(cand)
@@ -270,9 +272,13 @@ def check(answer, passages):
             continue
         scores = [_support(words, t) for t in ptoks]
         if good:
-            s = _support(words, set().union(*(ptoks[i] for i in pool)))
+            have = set().union(*(ptoks[i] for i in pool))
+            s = _support(words, have)
             if s < LOW_SUPPORT:
                 msg = f"only {s:.0%} of this sentence's wording is in {label}"
+                absent = sorted(words - have)          # name the words that are not there: they are the invented part
+                if absent:
+                    msg += f"; not in {label}: " + ", ".join(absent[:8]) + (", ..." if len(absent) > 8 else "")
                 others = [i for i in range(k) if i not in pool]
                 if others:
                     b = max(others, key=lambda i: scores[i])
@@ -323,6 +329,20 @@ def _selftest():
         "Local port forwarding: ssh -L <local_port>:<victim>:<remote_port> user@host. "
         "Add -N -f to keep it quiet in the background.",
     ]
+    R = [  # trimmed from a real Casefile run: man nmap, then the HackTricks nmap page, then a HackTricks ffuf entry
+        "-p port ranges (Only scan specified ports)\n"
+        "           This option specifies which ports you want to scan and overrides\n"
+        "           the default. Individual port numbers are OK, as are ranges\n"
+        "           separated by a hyphen (e.g.  1-1023). The beginning and/or end\n"
+        "           values of a range may be omitted, causing Nmap to use 1 and 65535,\n"
+        "           respectively. So you can specify -p- to scan ports from 1 through\n"
+        "           65535. Scanning port zero is allowed if you specify it explicitly.",
+        "**-p:** Used to specify ports to scan. To select all 65,335 ports: **-p-** or **-p all**. "
+        "Nmap has an internal classification based on popularity. By default, it uses the top 1000 ports.",
+        "Entry_12:\n  Name: Ffuf Vhost\n  Description: Simple Scan with Ffuf for discovering additional vhosts\n"
+        "  Command: ffuf -w {Subdomain_List}:FUZZ -u {Web_Proto}://{Domain_Name} "
+        "-H \"Host:FUZZ.{Domain_Name}\" -c -mc all {Ffuf_Filters}",
+    ]
     cases = [
         ("a correct, cited answer has no problems",
          "To scan every port, use `-p-` [2].",
@@ -357,10 +377,24 @@ def _selftest():
         ("odd input does not crash it",
          "```\n[1] [2][3] `[4]` ``` `",
          lambda r: isinstance(r.findings, list)),
+        # the next three use passages (R) from a real run
+        ("REAL RUN, nmap -p-: a number copied from one passage but cited to another is caught",
+         "According to [1], you can specify all 65,335 ports by using the option `-p-` or `-p all`.",
+         lambda r: any("does not contain 65335" in f.message and "it is in [2]" in f.message for f in r.findings),
+         R),
+        ("REAL RUN: a man-page line that wraps right before '65535.' is not cut in two",
+         "Use `-p-` to scan ports from 1 through 65535 [1].",
+         lambda r: closest(r.claims[0].text, R[0])[0].endswith("65535."),
+         R),
+        ("REAL RUN, ffuf -mc: an invented sentence is flagged, and the made-up words are named",
+         "According to [3], the ffuf -mc flag is used to specify the match condition, "
+         "and the possible values are all, partial, or none.",
+         lambda r: any("partial" in f.message and "none" in f.message for f in r.problems),
+         R),
     ]
     failed = 0
-    for name, answer, test in cases:
-        ok = bool(test(check(answer, P)))
+    for name, answer, test, *own in cases:
+        ok = bool(test(check(answer, own[0] if own else P)))
         failed += not ok
         print(("PASS  " if ok else "FAIL  ") + name)
     print(f"\n{len(cases) - failed}/{len(cases)} passed")
