@@ -770,7 +770,102 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q09",
+   "question": "how do I search a whole Linux filesystem for binaries that have Linux capabilities set?",
+   "expect": "answer",
+   "kind": "both",
+   "files": [
+    "hacktricks/src/linux-hardening/interesting-files-permissions/linux-capabilities.md",
+    "manpages/getcap.man.txt"
+   ],
+   "evidence": [
+    "You can search binaries with capabilities using getcap -r",
+    "-r  enables recursive search."
+   ],
+   "must": [
+    "getcap -r"
+   ],
+   "expected": "Run `getcap -r / 2>/dev/null`. `getcap` displays the name and capabilities of each specified file, and `-r` enables recursive search, so pointing it at `/` searches the whole filesystem. HackTricks introduces this command with \"You can search binaries with capabilities using getcap -r\", and its example shows `getcap /usr/bin/ping` printing `/usr/bin/ping = cap_net_raw+ep`.",
+   "seconds": 80.1,
+   "answer": "You can search binaries with capabilities using `getcap -r` as shown in [1]. The command is:\n\n```bash\ngetcap -r / 2>/dev/null\n```",
+   "truncated": false,
+   "prompt_tokens": 1565,
+   "answer_tokens": 39,
+   "passage_numbers": [
+    1
+   ],
+   "passage_in_context": true,
+   "page_in_context": true,
+   "cited": [
+    1
+   ],
+   "cites_passage": true,
+   "must_found": [
+    "getcap -r"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/linux-hardening/interesting-files-permissions/linux-capabilities.md",
+     "section": "Binaries Capabilities",
+     "similarity": 0.7193,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "Binaries can have file capabilities that are applied during execution. For example, a `ping` binary may carry the `cap_net_raw` capability.<sup>[[14]](#references)</sup>\n\n```bash\ngetcap /usr/bin/ping\n/usr/bin/ping = cap_net_raw+ep\n```\n\nYou can **search binaries with capabilities** using `getcap -r`.<sup>[[23]](#references)</sup>\n\n```bash\ngetcap -r / 2>/dev/null\n```"
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/SUMMARY.md",
+     "section": "🐧 Linux Hardening",
+     "similarity": 0.6974,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "- [Linux Basics]()\n  - [Linux Privilege Escalation](linux-hardening/linux-basics/linux-privilege-escalation/README.md)\n  - [Useful Linux Commands](linux-hardening/linux-basics/useful-linux-commands.md)\n  - [Linux Environment Variables](linux-hardening/linux-basics/linux-environment-variables.md)\n  - [Bypass Linux Restrictions](linux-hardening/linux-basics/bypass-linux-restrictions/README.md)\n    - [Bypass FS protections: read-only / no-exec / Distroless](linux-hardening/linux-basics/bypass-linux-restrictions/bypass-fs-protections-read-only-no-exec-distroless/README.md)\n      - [DDexec / EverythingExec](linux-hardening/linux-basics/bypass-linux-restrictions/bypass-fs-protections-read-only-no-exec-distroless/ddexec.md)\n- [Main System Information]()\n  - [Kernel Modules and modprobe Abuse](linux-hardening/main-system-information/kernel-modules-and-modprobe.md)\n  - [Sudo Command Abuse](linux-hardening/main-system-information/sudo-command-abuse.md)\n  - [Filesystem, Inodes and Recovery](linux-hardening/main-system-information/filesystem-inodes-and-recovery.md)\n  - [Checklist - Linux Privilege Escalation](linux-hardening/main-system-information/linux-privilege-escalation-checklist.md)\n  - [Escaping from Jails](linux-hardening/main-system-information/escaping-from-limited-bash.md)\n  - [Kernel/LPE/CVE material]()\n    - [Vmware Tools Service Discovery Untrusted Search Path Cve 2025 41244](linux-hardening/main-system-information/kernel-lpe-cves/vmware-tools-service-discovery-untrusted-se"
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/hardware-physical-access/firmware-analysis/README.md",
+     "section": "Filesystem Analysis",
+     "similarity": 0.6852,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "With the filesystem extracted, the search for security flaws begins. Attention is paid to insecure network daemons, hardcoded credentials, API endpoints, update server functionalities, uncompiled code, startup scripts, and compiled binaries for offline analysis.\n\n**Key locations** and **items** to inspect include:\n\n- **etc/shadow** and **etc/passwd** for user credentials\n- SSL certificates and keys in **etc/ssl**\n- Configuration and script files for potential vulnerabilities\n- Embedded binaries for further analysis\n- Common IoT device web servers and binaries\n\nSeveral tools assist in uncovering sensitive information and vulnerabilities within the filesystem:\n\n- [**LinPEAS**](https://github.com/carlospolop/PEASS-ng) and [**Firmwalker**](https://github.com/craigz28/firmwalker) for sensitive information search\n- [**The Firmware Analysis and Comparison Tool (FACT)**](https://github.com/fkie-cad/FACT_core) for comprehensive firmware analysis\n- [**FwAnalyzer**](https://github.com/cruise-automation/fwanalyzer), [**ByteSweep**](https://gitlab.com/bytesweep/bytesweep), [**ByteSweep-go**](https://gitlab.com/bytesweep/bytesweep-go), and [**EMBA**](https://github.com/e-m-b-a/emba) for static and dynamic analysis"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/mobile-pentesting/ios-pentesting/extracting-entitlements-from-compiled-application.md",
+     "section": "**Extracting the Entitlements Plist from the App Binary**",
+     "similarity": 0.6824,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "With the app binary accessible on a computer, **binwalk** can be utilized to extract all XML files. The command below demonstrates how to do so:\n\n```bash\n$ binwalk -e -y=xml ./Telegram\\ X\n\nDECIMAL       HEXADECIMAL     DESCRIPTION\n--------------------------------------------------------------------------------\n1430180       0x15D2A4        XML document, version: \"1.0\"\n1458814       0x16427E        XML document, version: \"1.0\"\n```\n\nAlternatively, **radare2** can be used to quietly run a command and exit, searching for all strings in the app binary that contain \"PropertyList\":\n\n```bash\n$ r2 -qc 'izz~PropertyList' ./Telegram\\ X\n\n0x0015d2a4 ascii <?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>...\n0x0016427d ascii H<?xml version=\"1.0\" encoding=\"UTF-8\"?>...\n```\n\nBoth Binwalk and radare2 can locate embedded property-list text. In this Telegram example, the first XML object at `0x0015d2a4` corresponds to the project's entitlement file.<sup>[[3]](#references)</sup>\n\nFor app binaries accessed on jailbroken devices (e.g., via SSH), the **grep** command with the `-a, --text` flag can be used to treat all files as ASCII text:\n\n```bash\n$ grep -a -A 5 'PropertyList' /var/containers/Bundle/Application/...\n```"
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/generic-methodologies-and-resources/basic-forensic-methodology/linux-forensics.md",
+     "section": "If a suspicious library is referenced, inspect its metadata and links",
+     "similarity": 0.6794,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "ls -lah /lib /lib64 /usr/lib /usr/lib64 /usr/local/lib 2>/dev/null | grep -E '\\\\.so(\\\\.|$)'\nldd /bin/ls\n```\n\nPay special attention to libraries referenced from **writable** paths such as `/tmp`, `/dev/shm`, `/var/tmp`, or odd locations under `/usr/local/lib`. Also check for capability-bearing binaries outside normal package ownership and correlate them with package verification results (`rpm -Va`, `dpkg --verify`, `debsums`)."
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 22:59"
+ "updated": "2026-11-10 23:00"
 }
