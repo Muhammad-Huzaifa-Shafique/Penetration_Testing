@@ -203,6 +203,101 @@
    "error": null
   },
   {
+   "id": "q03",
+   "question": "what does nmap's -Pn option do and when would I use it?",
+   "expect": "answer",
+   "kind": "man page",
+   "files": [
+    "manpages/nmap.man.txt"
+   ],
+   "evidence": [
+    "This option skips the host discovery stage altogether",
+    "all 65,536 IP addresses are scanned"
+   ],
+   "must": [
+    "-Pn"
+   ],
+   "expected": "`-Pn` skips the host discovery stage altogether. Normally Nmap uses that stage to determine active machines for heavier scanning and to gauge the speed of the network, and only runs heavy probing such as port scans, version detection or OS detection against hosts found to be up. With `-Pn` it attempts the requested scanning functions against every target IP address, as if each one were active, so a /16 network means all 65,536 addresses are scanned. Default timing parameters are used, which may result in slower scans. To skip host discovery and the port scan while still allowing NSE to run, use `-Pn -sn` together. The passage describes what `-Pn` does rather than when to use it; the text just before it notes that hosts could be missed when a firewall drops probes or their responses.",
+   "seconds": 138.8,
+   "answer": "According to [1], the -Pn option skips the host discovery stage altogether. This means that Nmap will attempt the requested scanning functions against every target IP address specified, without first determining which hosts are up. \n\nYou would use -Pn when you want to skip host discovery and port scan, but still allow NSE (Nmap Scripting Engine) to run, as stated in [3].",
+   "truncated": false,
+   "prompt_tokens": 1231,
+   "answer_tokens": 83,
+   "passage_numbers": [
+    1
+   ],
+   "passage_in_context": true,
+   "page_in_context": true,
+   "cited": [
+    1,
+    3
+   ],
+   "cites_passage": true,
+   "must_found": [
+    "-Pn"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "manpages/nmap.man.txt",
+     "section": "HOST DISCOVERY",
+     "similarity": 0.7912,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "those advanced techniques is recommended. Otherwise hosts could be\n           missed when the firewall drops probes or their responses.\n\nIn previous releases of Nmap, -sn was known as -sP.\n\n-Pn (No ping)\n           This option skips the host discovery stage altogether. Normally,\n           Nmap uses this stage to determine active machines for heavier\n           scanning and to gauge the speed of the network. By default, Nmap\n           only performs heavy probing such as port scans, version detection,\n           or OS detection against hosts that are found to be up. Disabling\n           host discovery with -Pn causes Nmap to attempt the requested\n           scanning functions against every target IP address specified. So if\n           a /16 sized network is specified on the command line, all 65,536 IP\n           addresses are scanned. Proper host discovery is skipped as with the\n           list scan, but instead of stopping and printing the target list,\n           Nmap continues to perform requested functions as if each target IP\n           is active. Default timing parameters are used, which may result in\n           slower scans. To skip host discovery and port scan, while still\n           allowing NSE to run, use the two options -Pn -sn together."
+    },
+    {
+     "n": 2,
+     "source": "manpages/nmap.man.txt",
+     "section": "OPTIONS SUMMARY",
+     "similarity": 0.7729,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "This options summary is printed when Nmap is run with no arguments, and\n       the latest version is always available at\n       https://svn.nmap.org/nmap/docs/nmap.usage.txt. It helps people remember\n       the most common options, but is no substitute for the in-depth\n       documentation in the rest of this manual. Some obscure options aren't\n       even included here."
+    },
+    {
+     "n": 3,
+     "source": "manpages/nmap.man.txt",
+     "section": "HOST DISCOVERY",
+     "similarity": 0.7629,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "Default timing parameters are used, which may result in\n           slower scans. To skip host discovery and port scan, while still\n           allowing NSE to run, use the two options -Pn -sn together.\n\nFor machines on a local ethernet network, ARP scanning will still\n           be performed (unless --disable-arp-ping or --send-ip is specified)\n           because Nmap needs MAC addresses to further scan target hosts. In\n           previous versions of Nmap, -Pn was -P0 and -PN.\n\n-PS port list (TCP SYN Ping)\n           This option sends an empty TCP packet with the SYN flag set. The\n           default destination port is 80 (configurable at compile time by\n           changing DEFAULT_TCP_PROBE_PORT_SPEC in nmap.h).  Alternate ports\n           can be specified as a parameter. The syntax is the same as for the\n           -p except that port type specifiers like T: are not allowed.\n           Examples are -PS22 and -PS22-25,80,113,1050,35000. Note that there\n           can be no space between -PS and the port list. If multiple probes\n           are specified they will be sent in parallel."
+    },
+    {
+     "n": 4,
+     "source": "manpages/nmap.man.txt",
+     "section": "DESCRIPTION",
+     "similarity": 0.7488,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "Nmap (“Network Mapper”) is an open source tool for network exploration\n       and security auditing. It was designed to rapidly scan large networks,\n       although it works fine against single hosts. Nmap uses raw IP packets\n       in novel ways to determine what hosts are available on the network,\n       what services (application name and version) those hosts are offering,\n       what operating systems (and OS versions) they are running, what type of\n       packet filters/firewalls are in use, and dozens of other\n       characteristics. While Nmap is commonly used for security audits, many\n       systems and network administrators find it useful for routine tasks\n       such as network inventory, managing service upgrade schedules, and\n       monitoring host or service uptime."
+    },
+    {
+     "n": 5,
+     "source": "manpages/nmap.man.txt",
+     "section": "PORT SPECIFICATION AND SCAN ORDER",
+     "similarity": 0.7413,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "In addition to all of the scan methods discussed previously, Nmap\n       offers options for specifying which ports are scanned and whether the\n       scan order is randomized or sequential. By default, Nmap scans the most\n       common 1,000 ports for each protocol.\n\n-p port ranges (Only scan specified ports)\n           This option specifies which ports you want to scan and overrides\n           the default. Individual port numbers are OK, as are ranges\n           separated by a hyphen (e.g.  1-1023). The beginning and/or end\n           values of a range may be omitted, causing Nmap to use 1 and 65535,\n           respectively. So you can specify -p- to scan ports from 1 through\n           65535. Scanning port zero is allowed if you specify it explicitly.\n           For IP protocol scanning (-sO), this option specifies the protocol\n           numbers you wish to scan for (0–255)."
+    }
+   ],
+   "error": null
+  },
+  {
    "id": "q07",
    "question": "what does the whatweb tool actually identify on a website?",
    "expect": "answer",
@@ -298,5 +393,5 @@
    "error": null
   }
  ],
- "updated": "2026-11-10 18:23"
+ "updated": "2026-11-10 18:26"
 }
