@@ -1518,7 +1518,108 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q17",
+   "question": "what command-line tools does the corpus mention for enumerating a company's subdomains?",
+   "expect": "answer",
+   "kind": "HackTricks",
+   "files": [
+    "hacktricks/src/generic-methodologies-and-resources/external-recon-methodology/README.md"
+   ],
+   "evidence": [
+    "amass enum",
+    "subfinder"
+   ],
+   "must": [
+    "amass",
+    "subfinder"
+   ],
+   "expected": "The page's OSINT section says the fastest way to get many subdomains is to search external sources, and lists tools for it (configure their API keys for better results): BBOT, Amass (the page's example is `amass enum [-active] [-ip] -d tesla.com`, followed by a line that pipes the output through grep to list just the subdomains) and subfinder, followed by others such as findomain, OneForAll and assetfinder. One BBOT example adds the `naabu` and `gowitness` modules to the subdomain-enum run.",
+   "seconds": 82.0,
+   "answer": "The corpus mentions the following command-line tools for enumerating a company's subdomains:\n\n* `bbot` [1]\n* `amass` [2]\n* `subfinder` [2]\n* `sudomy` [5]\n* `vita` [5]\n* `theHarvester` [5]\n* `censys-subdomain-finder` [4]\n* `DomainTrail.py` [4]\n\nNote that some of these tools require API keys or other setup, as mentioned in the passages.",
+   "truncated": false,
+   "prompt_tokens": 1353,
+   "answer_tokens": 109,
+   "passage_numbers": [
+    1
+   ],
+   "passage_in_context": true,
+   "page_in_context": true,
+   "cited": [
+    1,
+    2,
+    4,
+    5
+   ],
+   "cites_passage": true,
+   "must_found": [
+    "amass",
+    "subfinder"
+   ],
+   "declined": false,
+   "check_problems": [
+    "WARN: no citation, and little of it is in any passage (best: [3], 29%); maybe from memory"
+   ],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/generic-methodologies-and-resources/external-recon-methodology/README.md",
+     "section": "subdomains + port scan + web screenshots",
+     "similarity": 0.7532,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "bbot -t tesla.com -f subdomain-enum -m naabu gowitness -n my_scan -o .\n```\n\n- [**Amass**](https://github.com/OWASP/Amass)\n\n```bash\namass enum [-active] [-ip] -d tesla.com\namass enum -d tesla.com | grep tesla.com # To just list subdomains\n```\n\n- [**subfinder**](https://github.com/projectdiscovery/subfinder)\n\n```bash"
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/network-services-pentesting/3260-pentesting-iscsi.md",
+     "section": "END RECORD",
+     "similarity": 0.7298,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "```\n\n**There is a script to automate basic subnet enumeration process available at** [**iscsiadm**](https://github.com/bitvijays/Pentest-Scripts/tree/master/Vulnerability_Analysis/isciadm)"
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/generic-methodologies-and-resources/external-recon-methodology/README.md",
+     "section": "Recapitulation",
+     "similarity": 0.7109,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "> Congratulations! At this point you have already perform **all the basic enumeration**. Yes, it's basic because a lot more enumeration can be done (will see more tricks later).\n\nSo you have already:\n\n1. Found all the **companies** inside the scope\n2. Found all the **assets** belonging to the companies (and perform some vuln scan if in scope)\n3. Found all the **domains** belonging to the companies\n4. Found all the **subdomains** of the domains (any subdomain takeover?)\n5. Found all the **IPs** (from and **not from CDNs**) inside the scope.\n6. Found all the **web servers** and took a **screenshot** of them (anything weird worth a deeper look?)\n7. Found all the **potential public cloud assets** belonging to the company.\n8. **Emails**, **credentials leaks**, and **secret leaks** that could give you a **big win very easily**.\n9. **Pentesting all the webs you found**"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/generic-methodologies-and-resources/external-recon-methodology/README.md",
+     "section": "Get other pages with links to subdomains",
+     "similarity": 0.7025,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "shodan search \"http.html:help.domain.com\"\n```\n\n- [**Censys subdomain finder**](https://github.com/christophetd/censys-subdomain-finder)\n\n```bash\nexport CENSYS_API_ID=...\nexport CENSYS_API_SECRET=...\npython3 censys-subdomain-finder.py tesla.com\n```\n\n- [**DomainTrail.py**](https://github.com/gatete/DomainTrail)\n\n```bash\npython3 DomainTrail.py -d example.com\n```\n\n- [**securitytrails.com**](https://securitytrails.com/) has a free API to search for subdomains and IP history\n- [**chaos.projectdiscovery.io**](https://chaos.projectdiscovery.io/#/)\n\nThis project offers for **free all the subdomains related to bug-bounty programs**. You can access this data also using [chaospy](https://github.com/dr-0x0x/chaospy) or even access the scope used by this project [https://github.com/projectdiscovery/chaos-public-program-list](https://github.com/projectdiscovery/chaos-public-program-list)\n\nYou can find a **comparison** of many of these tools here: [https://blog.blacklanternsecurity.com/p/subdomain-enumeration-tool-face-off](https://blog.blacklanternsecurity.com/p/subdomain-enumeration-tool-face-off)"
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/generic-methodologies-and-resources/external-recon-methodology/README.md",
+     "section": "It requires that you create a sudomy.api file with API keys",
+     "similarity": 0.7019,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "sudomy -d tesla.com\n```\n\n- [**vita**](https://github.com/junnlikestea/vita)\n\n```\nvita -d tesla.com\n```\n\n- [**theHarvester**](https://github.com/laramies/theHarvester)\n\n```bash\ntheHarvester -d tesla.com -b \"anubis, baidu, bing, binaryedge, bingapi, bufferoverun, censys, certspotter, crtsh, dnsdumpster, duckduckgo, fullhunt, github-code, google, hackertarget, hunter, intelx, linkedin, linkedin_links, n45ht, omnisint, otx, pentesttools, projectdiscovery, qwant, rapiddns, rocketreach, securityTrails, spyse, sublist3r, threatcrowd, threatminer, trello, twitter, urlscan, virustotal, yahoo, zoomeye\"\n```\n\nThere are **other interesting tools/APIs** that even if not directly specialised in finding subdomains could be useful to find subdomains, like:\n\n- [**IP.THC.ORG**](https://ip.thc.org) free API\n\n```bash\ncurl https://ip.thc.org/tesla.com\n```\n\n- [**Crobat**](https://github.com/cgboal/sonarsearch)**:** Uses the API [https://sonar.omnisint.io](https://sonar.omnisint.io) to obtain subdomains\n\n```bash"
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:09"
+ "updated": "2026-11-10 23:11"
 }
