@@ -1713,7 +1713,97 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q19",
+   "question": "how do I check whether macOS Gatekeeper is enabled, and whether it would let a particular app run?",
+   "expect": "answer",
+   "kind": "HackTricks",
+   "files": [
+    "hacktricks/src/macos-hardening/macos-security-and-privilege-escalation/macos-security-protections/macos-gatekeeper.md"
+   ],
+   "evidence": [
+    "spctl --status",
+    "spctl --assess -v /Applications/App.app"
+   ],
+   "must": [
+    "spctl"
+   ],
+   "expected": "`spctl --status` shows the status of Gatekeeper (`spctl` is the command-line tool for enumerating and interacting with Gatekeeper). To check whether a particular app would be allowed by Gatekeeper, run `spctl --assess -v /Applications/App.app`. HackTricks also notes that Gatekeeper's signature checks are performed only on files with the Quarantine attribute, not on every file, and that `syspolicyd` is the main daemon responsible for enforcing Gatekeeper, maintaining a database located in `/var/db/SystemPolicy`.",
+   "seconds": 84.5,
+   "answer": "To check whether macOS Gatekeeper is enabled, you can check the system settings. However, the passages don't provide the exact steps to do so. \n\nTo check whether a particular app would be allowed to run, you can check the app's signature. According to [2], Gatekeeper verifies the application signature when a user attempts to open an application downloaded from the internet. If the app is signed with a certificate issued by Apple to a known developer and the code hasn't been tampered with, Gatekeeper permits the application to run.",
+   "truncated": false,
+   "prompt_tokens": 1149,
+   "answer_tokens": 109,
+   "passage_numbers": [],
+   "passage_in_context": false,
+   "page_in_context": true,
+   "cited": [
+    2
+   ],
+   "cites_passage": false,
+   "must_found": [],
+   "declined": true,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/macos-hardening/macos-security-and-privilege-escalation/macos-security-protections/macos-gatekeeper.md",
+     "section": "Gatekeeper",
+     "similarity": 0.7915,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "**Gatekeeper** is a security feature developed for Mac operating systems, designed to ensure that users **run only trusted software** on their systems. It functions by **validating software** that a user downloads and attempts to open from **sources outside the App Store**, such as an app, a plug-in, or an installer package.\n\nThe key mechanism of Gatekeeper lies in its **verification** process. It checks if the downloaded software is **signed by a recognized developer**, ensuring the software's authenticity. Further, it ascertains whether the software is **notarised by Apple**, confirming that it is devoid of known malicious content and has not been tampered with after notarisation.\n\nAdditionally, Gatekeeper reinforces user control and security by **prompting users to approve the opening** of downloaded software for the first time. This safeguard helps prevent users from inadvertently running potentially harmful executable code that they may have mistaken for a harmless data file."
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/macos-hardening/macos-security-and-privilege-escalation/macos-security-protections/macos-gatekeeper.md",
+     "section": "Application Signatures",
+     "similarity": 0.7881,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "he application and compares this with the decrypted hash. If they match, it means **the application hasn't been modified** since the developer signed it, and the system permits the application to run.\n\nApplication signatures are an essential part of Apple's Gatekeeper technology. When a user attempts to **open an application downloaded from the internet**, Gatekeeper verifies the application signature. If it's signed with a certificate issued by Apple to a known developer and the code hasn't been tampered with, Gatekeeper permits the application to run. Otherwise, it blocks the application and alerts the user.\n\nStarting from macOS Catalina, **Gatekeeper also checks whether the application has been notarized** by Apple, adding an extra layer of security. The notarization process checks the application for known security issues and malicious code, and if these checks pass, Apple adds a ticket to the application that Gatekeeper can verify."
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/macos-hardening/macos-security-and-privilege-escalation/macos-security-protections/macos-gatekeeper.md",
+     "section": "Gatekeeper Bypasses",
+     "similarity": 0.7759,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "Any way to bypass Gatekeeper (manage to make the user download something and execute it when Gatekeeper should disallow it) is considered a vulnerability in macOS. These are some CVEs assigned to techniques that allowed to bypass Gatekeeper in the past:"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/macos-hardening/macos-security-and-privilege-escalation/macos-security-protections/macos-gatekeeper.md",
+     "section": "[CVE-2024-27853]",
+     "similarity": 0.7672,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "A Gatekeeper bypass in macOS 14.4 (released March 2024) stemming from `libarchive` handling of malicious ZIPs allowed apps to evade assessment. Update to 14.4 or later where Apple addressed the issue.<sup>[[1]](#references)</sup>"
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/macos-hardening/macos-security-and-privilege-escalation/macos-security-protections/macos-gatekeeper.md",
+     "section": "Not Gatekeeper",
+     "similarity": 0.7578,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "> [!CAUTION]\n> Note that Gatekeeper **isn't executed every time** you execute an application, just _**AppleMobileFileIntegrity**_ (AMFI) will only **verify executable code signatures** when you execute an app that has been already executed and verified by Gatekeeper.\n\nTherefore, previously it was possible to execute an app to cache it with Gatekeeper, then **modify not executables files of the application** (like Electron asar or NIB files) and if no other protections were in place, the application was **executed** with the **malicious** additions.\n\nHowever, now this is not possible because macOS **prevents modifying files** inside applications bundles. So, if you try the [Dirty NIB](../macos-proces-abuse/macos-dirty-nib.md) attack, you will find that it's not longer possible to abuse it because after executing the app to cache it with Gatekeeper, you won't be able to modify the bundle. And if you change for example the name of the Contents directory to NotCon (as indicated in the exploit), and then execute the main binary of the app to cache it with Gatekeeper, it will trigger an error and won't execute."
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:12"
+ "updated": "2026-11-10 23:13"
 }
