@@ -1143,7 +1143,99 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q13",
+   "question": "how do I ask a DNS server for a full copy of a domain's records in one request?",
+   "expect": "answer",
+   "kind": "HackTricks",
+   "files": [
+    "hacktricks/src/network-services-pentesting/pentesting-dns.md"
+   ],
+   "evidence": [
+    "AXFR is the DNS mechanism for transferring a complete zone",
+    "dig axfr @<DNS_IP> <DOMAIN>"
+   ],
+   "must": [
+    "AXFR"
+   ],
+   "expected": "This is a zone transfer. HackTricks describes AXFR as the DNS mechanism for transferring a complete zone from an authoritative server. Its `dig` examples are `dig axfr @<DNS_IP> <DOMAIN>` (commented \"Try zone transfer guessing the domain\") and `dig axfr @<DNS_IP>` (commented \"Try zone transfer without domain\").",
+   "seconds": 69.7,
+   "answer": "To ask a DNS server for a full copy of a domain's records in one request, you can use an **`AXFR`** query, as mentioned in [5].",
+   "truncated": false,
+   "prompt_tokens": 1255,
+   "answer_tokens": 37,
+   "passage_numbers": [],
+   "passage_in_context": false,
+   "page_in_context": true,
+   "cited": [
+    5
+   ],
+   "cites_passage": false,
+   "must_found": [
+    "AXFR"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/network-services-pentesting/pentesting-dns.md",
+     "section": "**Any record**",
+     "similarity": 0.7204,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "An **`ANY`** query asks the DNS server to return whatever record set it is willing and able to provide; modern authoritative servers may intentionally return a minimal response rather than every record.<sup>[[4]](#references)</sup>\n\n```bash\ndig any victim.com @<DNS_IP>\n```"
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/network-services-pentesting/pentesting-web/uncovering-cloudflare.md",
+     "section": "Common Techniques to Uncover Cloudflare",
+     "similarity": 0.7074,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "- You can use some service that gives you the **historical DNS records** of the domain. Maybe the web page is running on an IP address used before.\n  - Same could be achieve **checking historical SSL certificates** that could be pointing to the origin IP address.\n  - Check also **DNS records of other subdomains pointing directly to IPs**, as it's possible that other subdomains are pointing to the same server (maybe to offer FTP, mail or any other service).\n  - Review all **DNS-only `A`/`AAAA`/`CNAME` siblings** and boring records such as `direct`, `origin`, `api`, `admin`, `cpanel`, `autodiscover`, `mail`, `mx`, `staging`, or forgotten IPv6-only hostnames. A single unproxied record is enough to leak the box.\n- Audit **DNS-only TXT/SPF/MX** data and the **mail infrastructure**. If web and mail share the same machine, bounces for invalid users, SMTP banners, or `Received` headers can reveal the real IP address.\n- If you find a **SSRF inside the web application** you can abuse it to obtain the IP address of the server.\n- Search a unique string of the web page in browsers such as shodan (and maybe google and similar?). Maybe you can find an IP address with that content.\n  - In a similar way instead of looking for a uniq string you could search for the favicon icon with the tool: [https://github.com/karma9874/CloudFlare-IP](https://github.com/karma9874/CloudFlare-IP) or with [https://github.com/pielco11/fav-up](https://github.com/pielco11/fav-up)\n  - This won't work be very freque"
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/pentesting-web/cors-bypass.md",
+     "section": "DNS Rebinding via TTL",
+     "similarity": 0.706,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "d period, allowing the cache to expire.\n\nIf you need a quick way to abuse DNS rebinding, you can use services like [https://lock.cmpxchg8b.com/rebinder.html](https://lock.cmpxchg8b.com/rebinder.html).\n\nTo run your own DNS rebinding server, you can utilize tools like **DNSrebinder** ([https://github.com/mogwailabs/DNSrebinder](https://github.com/mogwailabs/DNSrebinder)). This involves exposing your local port 53/udp, creating an A record pointing to it (e.g., ns.example.com), and creating an NS record pointing to the previously created A subdomain (e.g., ns.example.com). Any subdomain of the ns.example.com subdomain will then be resolved by your host.\n\nYou can also explore a publicly running server at [http://rebind.it/singularity.html](http://rebind.it/singularity.html) for further understanding and experimentation."
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/generic-methodologies-and-resources/basic-forensic-methodology/pcap-inspection/README.md",
+     "section": "DNS info",
+     "similarity": 0.7015,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "```bash\n#Get info about each DNS request performed\ncat dns.log | zeek-cut -c id.orig_h query qtype_name answers\n\n#Get the number of times each domain was requested and get the top 10\ncat dns.log | zeek-cut query | sort | uniq | rev | cut -d '.' -f 1-2 | rev | sort | uniq -c | sort -nr | head -n 10\n\n#Get all the IPs\ncat dns.log | zeek-cut id.orig_h query | grep 'example\\.com' | cut -f 1 | sort | uniq -c\n\n#Sort the most common DNS record request (should be A)\ncat dns.log | zeek-cut qtype_name | sort | uniq -c | sort -nr\n\n#See top DNS domain requested with rita\nrita show-exploded-dns -H --limit 10 zeek_logs\n```"
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-network/pentesting-ipv6.md",
+     "section": "Utilizing DNS Queries",
+     "similarity": 0.6959,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "To identify IPv6 addresses, certain DNS record types can be queried:\n\n- **AXFR**: Requests a complete zone transfer, potentially uncovering a wide range of DNS records.\n- **AAAA**: Directly seeks out IPv6 addresses.\n- **ANY**: A broad query that returns all available DNS records."
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:04"
+ "updated": "2026-11-10 23:05"
 }
