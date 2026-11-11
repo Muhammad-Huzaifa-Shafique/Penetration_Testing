@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-answer.py -- Casefile Weeks 6-8: "Get a real answer out", "Make it prove its work", "Remember the conversation"
+answer.py -- Casefile Weeks 6-8 and 12: "Get a real answer out", "Make it prove its work",
+"Remember the conversation", and Week 12's error handling and "nothing found" cutoff
 
 Takes a typed pentesting question, pulls the closest chunks from your index with
 retrieve.py (Week 5), hands question + chunks to the local chat model
@@ -15,6 +16,7 @@ Run it from the project root with the venv active:
     python answer.py -q "how do I enumerate SMB shares"   # one question
     python answer.py -q "..." -e all-minilm -k 8          # pick index / chunk count
     python answer.py -q "..." --show-chunks               # also print chunk text
+    python answer.py -q "..." --no-cutoff                 # ask the model even if nothing is close
 
 Week 7 (citecheck.py): under every answer it prints only the passages the answer actually
 cited, with the file each came from, and flags citations that do not check out.
@@ -25,6 +27,13 @@ work out what it means. The search and the model are then given that question, a
 been typed on its own (ANSWER_SEES_HISTORY, below, says why the model is not also shown the
 earlier turns). '/reset' forgets, '/history' shows what is remembered. A single question (-q)
 is still asked on its own, exactly as in Week 7.
+
+Week 12: if the best passage the search finds scores below the "nothing found" cutoff for that
+index (CUTOFFS, below), the chat model is not asked: the answer is "Nothing found" within seconds
+instead of a decline after a minute or two. --no-cutoff switches this off. Before the first
+question, answer.py checks that the index is there, that Ollama answers and that the models are
+pulled (--no-checks skips this). A failed search, a failed chat call or an unexpected error is
+reported in a few lines, and the chat carries on with the next question.
 
 Later weeks can import it:   from answer import ask
 (Week 11 calls ask() in a loop over the answer key, without history, so every question is
@@ -37,6 +46,7 @@ import inspect
 import os
 import sys
 import time
+import traceback
 from dataclasses import dataclass, field
 
 try:
@@ -91,6 +101,32 @@ HISTORY_CHARS = 4000   # ...and never more than about this many characters of th
 # With --no-rewrite the earlier turns are always shown: then they are the only way the model
 # can tell what the follow-up means.
 ANSWER_SEES_HISTORY = False
+
+# Week 12: the "nothing found" cutoff, one per index, because every embedding model has its own
+# similarity scale. When the best passage the search returns scores below the cutoff, ask() does
+# not call the chat model and answers NOTHING_FOUND (below) at once. Each value is the lowest
+# top-1 similarity seen for a question the corpus answers, minus about 0.04 as room for questions
+# not tried yet, rounded down:
+#   nomic-embed-text-prefixed   lowest 0.667 (Week 6, "What does the ffuf -mc flag do?")  -> 0.62
+#   nomic-embed-text            lowest 0.648 (answer key q16, Week 10)                    -> 0.60
+#   all-minilm                  lowest 0.445 (answer key q16, Week 10)                    -> 0.40
+# With the scores measured on 2026-11-10, these values turn away 7, 7 and 8 of 8 made-up off-topic
+# questions (sourdough bread, the capital of France, Hamlet, ...) and none of the 20 answer-key
+# questions. A question close to the corpus whose answer is missing (Snort, key q20) scores like
+# an answerable one; the model's grounding rule has to decline those. An index not listed here
+# has no cutoff.
+CUTOFFS = {
+    "nomic-embed-text-prefixed": 0.62,
+    "nomic-embed-text": 0.60,
+    "all-minilm": 0.40,
+}
+
+# Kept free of flags and numbers, so the citation check reads it as a decline with nothing to check.
+NOTHING_FOUND = (
+    "Nothing found: the corpus has no passage close enough to this question, so the chat model "
+    "was not asked. Casefile only covers HackTricks and the man pages of common security tools; "
+    "if this is a pentesting question, try naming the tool or technique."
+)
 
 # How answer.py finds things on a Hit / in retrieve()'s signature. If your Week 5
 # code names them differently, add the name here (first match wins).
@@ -189,6 +225,24 @@ def hit_score(hit):
     return ""
 
 
+def hit_similarity(hit):
+    """The hit's similarity as a number, or None (an index measured by distance has none)."""
+    v = hit_get(hit, "similarity", "score", "sim")
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return None
+
+
+def best_hit(hits):
+    """(hit, similarity) of the closest passage, or (None, None) if no hit has a similarity."""
+    scored = [(s, i) for i, s in enumerate(map(hit_similarity, hits)) if s is not None]
+    if not scored:
+        return None, None
+    s, i = max(scored, key=lambda t: (t[0], -t[1]))    # on a tie, the better-ranked hit
+    return hits[i], s
+
+
 def describe_hit(hit):
     if isinstance(hit, dict):
         fields = list(hit.keys())
@@ -206,6 +260,11 @@ def index_name(embedder):
             or os.environ.get("CASEFILE_EMBEDDER")
             or getattr(retriever, "DEFAULT_EMBEDDER", None)
             or "retrieve.py default")
+
+
+class RetrievalError(RuntimeError):
+    """Week 12: the search failed (Ollama down, no chroma_db/ here, no such index, ...), so the
+    chat model was not asked."""
 
 
 def call_retrieve(query, embedder, k):
@@ -241,11 +300,13 @@ def call_retrieve(query, embedder, k):
 
     try:
         return fn(query, **kwargs)
-    except TypeError:
-        print(f"\nCalling retrieve() failed.\n  signature: retrieve{sig}\n"
-              f"  I passed:  {kwargs}\nIf these don't fit, adjust call_retrieve() "
-              "or the *_PARAMS lists at the top of answer.py.", file=sys.stderr)
-        raise
+    except TypeError as e:
+        raise RetrievalError(
+            f"calling retrieve() failed ({e}).\n  signature: retrieve{sig}\n"
+            f"  I passed:  {kwargs}\nIf these don't fit, adjust call_retrieve() "
+            "or the *_PARAMS lists at the top of answer.py.") from e
+    except Exception as e:  # noqa: BLE001  (Week 12: reported in one message; Ctrl-C still passes through)
+        raise RetrievalError(str(e) or type(e).__name__) from e
 
 
 # --- building the prompt and asking the model ---------------------------------
@@ -286,6 +347,9 @@ class Answer:
     truncated: bool = False
     check: object = None  # Week 7: a citecheck.Check, filled in by ask()
     search_query: str = ""  # Week 8: what the search ran with (a follow-up made standalone)
+    nothing_found: bool = False  # Week 12: below the cutoff, so the chat model was not asked
+    top_similarity: float | None = None  # Week 12: the best passage's similarity (None: not known)
+    cutoff: float | None = None  # Week 12: the cutoff that was applied (None: no cutoff)
 
 
 def _get(obj, name, default=None):
@@ -312,8 +376,19 @@ def rewrite_query(query, earlier):
     return conversation.clean_rewrite(_get(_get(reply, "message"), "content", ""), query)
 
 
+def _check(text, hits):
+    """Week 12: citecheck.check(), but if the checker itself fails, only the check is lost, never
+    an answer that took minutes to generate."""
+    try:
+        return citecheck.check(text, [hit_text(h) for h in hits])
+    except Exception as e:  # noqa: BLE001
+        print(f"(note: the citation check failed -- {type(e).__name__}: {e}. "
+              "The answer is shown without it.)", file=sys.stderr)
+        return None
+
+
 def ask(query, embedder=None, k=None, on_hits=None, on_token=None,
-        history=None, rewrite=True, on_search=None):
+        history=None, rewrite=True, on_search=None, cutoff=True):
     """Retrieve chunks, build the prompt, ask the chat model, return an Answer.
 
     on_hits(hits)  is called once retrieval is done, before generation starts.
@@ -328,6 +403,12 @@ def ask(query, embedder=None, k=None, on_hits=None, on_token=None,
                    and the model are both given that question (False: both get the words as
                    typed, and the model is shown the earlier turns instead).
     on_search(q)   is called with the question the search will use, before retrieval starts.
+
+    Week 12:
+    cutoff         True (the default): when the best passage scores below CUTOFFS for this index,
+                   return at once with NOTHING_FOUND and nothing_found=True, without calling the
+                   chat model (on_hits is not called then). False: always ask the model.
+    A failed search raises RetrievalError, a failed chat call ChatError.
     """
     earlier = conversation.recent(history, HISTORY_TURNS, HISTORY_CHARS)
     search_query = rewrite_query(query, earlier) if earlier and rewrite else query
@@ -346,6 +427,11 @@ def ask(query, embedder=None, k=None, on_hits=None, on_token=None,
             f"retrieve() returned {len(hits)} hit(s) but I found no chunk text on them.\n"
             f"  A hit looks like: {describe_hit(hits[0])}\n"
             "Add the field that holds the chunk text to TEXT_FIELDS at the top of answer.py.")
+    _, top = best_hit(hits)
+    limit = CUTOFFS.get(index_name(embedder)) if cutoff else None
+    if limit is not None and top is not None and top < limit:
+        return Answer(NOTHING_FOUND, hits, check=_check(NOTHING_FOUND, hits), search_query=search_query,
+                      nothing_found=True, top_similarity=top, cutoff=limit)
     if on_hits:
         on_hits(hits)
 
@@ -372,8 +458,9 @@ def ask(query, embedder=None, k=None, on_hits=None, on_token=None,
 
     truncated = bool(prompt_tokens) and prompt_tokens >= NUM_CTX - 8
     text = "".join(pieces)
-    check = citecheck.check(text, [hit_text(h) for h in hits])
-    return Answer(text, hits, prompt_tokens, answer_tokens, truncated, check, search_query)
+    check = _check(text, hits)
+    return Answer(text, hits, prompt_tokens, answer_tokens, truncated, check, search_query,
+                  top_similarity=top, cutoff=limit)
 
 
 # --- the terminal side --------------------------------------------------------
@@ -449,11 +536,27 @@ def show_history(history):
         print(f"  {i}. {clip(q, 60)}  ->  {clip(a, 60)}")
 
 
-def run_once(query, embedder, k, show_chunks, history=None, rewrite=True):
+def show_nothing_found(ans, embedder, query, seconds):
+    """Week 12: what is printed when the best passage is below the cutoff."""
+    print(f"\nSearching {index_name(embedder)}: nothing close enough to answer from.")
+    if ans.search_query and ans.search_query != query:
+        print(f'  searched for: "{ans.search_query}"   (your follow-up, made standalone)')
+    best, sim = best_hit(ans.hits)
+    if best is not None:
+        print(f"  closest passage: {hit_label(best)}")
+        print(f"  its similarity {sim:.3f} is below {ans.cutoff:.2f}, the cutoff for this index")
+    print(f"\n{ans.text}")
+    print(f"\n[{seconds:.0f}s; the chat model was not asked. Start answer.py with --no-cutoff "
+          "to ask it anyway.]\n")
+
+
+def run_once(query, embedder, k, show_chunks, history=None, rewrite=True, cutoff=True):
     """Ask one question and print everything. Returns the Answer if one was printed, else False.
 
     Week 8: with a `history` list the question is asked in context, and once it has been
-    answered, (query, answer) is added to that list. history=None asks it on its own."""
+    answered, (query, answer) is added to that list. history=None asks it on its own.
+    Week 12: a "nothing found" answer is printed (and returned) but not remembered, and no error
+    gets out of here except SystemExit, so one failed question never ends the chat."""
     started = time.time()
     earlier = conversation.recent(history, HISTORY_TURNS, HISTORY_CHARS)
     searched = [query]    # what the search ran with; ask() reports it through on_search
@@ -478,9 +581,14 @@ def run_once(query, embedder, k, show_chunks, history=None, rewrite=True):
     try:
         ans = ask(query, embedder, k, on_hits=show_hits,
                   on_token=lambda t: print(t, end="", flush=True),
-                  history=history, rewrite=rewrite, on_search=note_search)
+                  history=history, rewrite=rewrite, on_search=note_search, cutoff=cutoff)
     except KeyboardInterrupt:
         print("\n(interrupted)")
+        return False
+    except RetrievalError as e:
+        print(f"\nThe search failed, so no answer was generated -- {e}\n"
+              "  (answer.py searches through retrieve.py: run it from the project root, the folder "
+              "that holds chroma_db/, with Ollama running.)")
         return False
     except ChatError as e:
         print(f"\nThe chat model call failed -- {e}\n"
@@ -489,13 +597,23 @@ def run_once(query, embedder, k, show_chunks, history=None, rewrite=True):
     except HitShapeError as e:
         print(f"\n{e}")
         return False
+    except Exception:  # noqa: BLE001  (Week 12: a bug is shown in full, but the chat carries on)
+        print("\nSomething unexpected went wrong while answering. Details:", flush=True)
+        traceback.print_exc()
+        return False
 
     if not ans.hits:
         print("\nNo chunks came back from retrieval, so there is nothing to ground an "
               "answer in. Try different wording or another index (-e).")
         return False
 
+    if ans.nothing_found:
+        show_nothing_found(ans, embedder, query, time.time() - started)
+        return ans
+
     print()
+    if not ans.text.strip():
+        print("(The model returned an empty answer. Ask again, or reword the question.)")
     stats = []
     if ans.prompt_tokens is not None:
         stats.append(f"prompt {ans.prompt_tokens} tokens")
@@ -513,13 +631,61 @@ def run_once(query, embedder, k, show_chunks, history=None, rewrite=True):
     print()
     if history is not None and ans.text.strip():
         history.append((query, ans.text))    # remembered for the next question
-    return ans
+    return ans if ans.text.strip() else False
+
+
+# --- Week 12: checks before the first question --------------------------------
+
+def _model_names(listing):
+    """The model names in ollama.list()'s reply, whatever shape this library version gives it."""
+    names = set()
+    for m in _get(listing, "models") or []:
+        for key in ("model", "name"):
+            v = _get(m, key)
+            if isinstance(v, str) and v:
+                names.add(v)
+    return names
+
+
+def _pulled(model, names):
+    """Is `model` among `names`? 'nomic-embed-text' matches 'nomic-embed-text:latest'."""
+    want = {model} if ":" in model else {model, model + ":latest"}
+    return any(n in want or n.rsplit("/", 1)[-1] in want for n in names)
+
+
+def preflight(embedder):
+    """What must be in place before a question can be answered, checked in a second or two:
+    the index, Ollama, and the embedding and chat models. Returns a list of problems (empty: all
+    well). Where something cannot be checked (an unexpected reply shape), it is not reported."""
+    problems = []
+    index = index_name(embedder)
+    opener = getattr(retriever, "open_collection", None)
+    if callable(opener) and index != "retrieve.py default":
+        try:
+            if opener(index).count() == 0:
+                problems.append(f"the index for '{index}' is empty. Build it first (see README.md).")
+        except Exception as e:  # noqa: BLE001
+            problems.append(f"the index: {e}\n    Run answer.py from the project root "
+                            "(the folder that holds chroma_db/).")
+    try:
+        listing = ollama.list()
+    except Exception as e:  # noqa: BLE001
+        problems.append(f"Ollama does not answer ({type(e).__name__}: {e}).\n    Start it (for example "
+                        "'ollama serve' in a second terminal) and check with 'ollama list'.")
+        return problems
+    names = _model_names(listing)
+    if names:
+        embed_model = getattr(retriever, "VARIANTS", {}).get(index, (index, ""))[0]
+        for model in dict.fromkeys([embed_model, CHAT_MODEL]):
+            if model != "retrieve.py default" and not _pulled(model, names):
+                problems.append(f"the model '{model}' is not pulled. Run: ollama pull {model}")
+    return problems
 
 
 def main():
     global HISTORY_TURNS
     ap = argparse.ArgumentParser(
-        description="Casefile -- grounded answers from your local RAG index (Weeks 6-8).")
+        description="Casefile -- grounded answers from your local RAG index (Weeks 6-8 and 12).")
     ap.add_argument("-q", "--question",
                     help="ask one question and exit (otherwise interactive)")
     ap.add_argument("-e", "--embedder",
@@ -533,16 +699,38 @@ def main():
                     help=f"earlier turns the chat remembers (default {HISTORY_TURNS}; 0 = none)")
     ap.add_argument("--no-rewrite", action="store_true",
                     help="search a follow-up with the words as typed (skip the rewrite step)")
+    ap.add_argument("--no-cutoff", action="store_true",
+                    help="ask the chat model even when no passage is close enough (see CUTOFFS)")
+    ap.add_argument("--no-checks", action="store_true",
+                    help="skip the start-up checks (index found, Ollama running, models pulled)")
     args = ap.parse_args()
+    if args.k is not None and args.k < 1:
+        ap.error("-k must be at least 1")
     if args.turns is not None:
         HISTORY_TURNS = max(0, args.turns)
+    cutoff = not args.no_cutoff
+
+    if not args.no_checks:
+        try:
+            problems = preflight(args.embedder)
+        except KeyboardInterrupt:
+            sys.exit(130)
+        if problems:
+            print("Casefile cannot start yet:", file=sys.stderr)
+            for p in problems:
+                print(f"  - {p}", file=sys.stderr)
+            print("(--no-checks skips these checks.)", file=sys.stderr)
+            sys.exit(2)
 
     if args.question:
-        ok = run_once(args.question, args.embedder, args.k, args.show_chunks)
+        ok = run_once(args.question, args.embedder, args.k, args.show_chunks, cutoff=cutoff)
         sys.exit(0 if ok else 1)
 
-    print(f"Casefile -- searching {index_name(args.embedder)}. Ask a pentesting question; "
-          "follow-ups are remembered.\n"
+    index = index_name(args.embedder)
+    limit = CUTOFFS.get(index) if cutoff else None
+    print(f"Casefile -- searching {index}"
+          + (f" (nothing-found cutoff {limit:.2f})" if limit is not None else "")
+          + ". Ask a pentesting question; follow-ups are remembered.\n"
           "'/reset' forgets the conversation, '/history' shows it, 'quit' or Ctrl-D exits.")
     history = []    # Week 8: (question, answer) pairs, oldest first
     while True:
@@ -562,7 +750,7 @@ def main():
             show_history(history)
         elif q and not q.startswith("#"):
             run_once(q, args.embedder, args.k, args.show_chunks, history,
-                     rewrite=not args.no_rewrite)
+                     rewrite=not args.no_rewrite, cutoff=cutoff)
 
 
 if __name__ == "__main__":
