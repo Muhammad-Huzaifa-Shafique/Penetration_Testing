@@ -1619,7 +1619,101 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q18",
+   "question": "what do the different flags on \"adb install\" do?",
+   "expect": "answer",
+   "kind": "HackTricks",
+   "files": [
+    "hacktricks/src/mobile-pentesting/android-app-pentesting/adb-commands.md"
+   ],
+   "evidence": [
+    "replace existing application",
+    "forward lock application"
+   ],
+   "must": [
+    "adb install"
+   ],
+   "expected": "`adb install test.apk` installs the APK. HackTricks lists these flags for it: `-l` forward lock application, `-r` replace existing application, `-t` allow test packages, `-s` install application on sdcard, `-d` allow version code downgrade, and `-p` partial application install.",
+   "seconds": 59.0,
+   "answer": "According to [4], the flags for `adb install` are:\n\n- `-r` (not specified what this flag does)\n- `-g` (grants all runtime permissions declared in the manifest)\n\nThere is no explanation for the `-r` flag in the provided passages.",
+   "truncated": false,
+   "prompt_tokens": 1111,
+   "answer_tokens": 57,
+   "passage_numbers": [],
+   "passage_in_context": false,
+   "page_in_context": true,
+   "cited": [
+    4
+   ],
+   "cites_passage": false,
+   "must_found": [
+    "adb install"
+   ],
+   "declined": false,
+   "check_problems": [
+    "WARN: no citation, and little of it is in any passage (best: [1], 25%); maybe from memory"
+   ],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/mobile-pentesting/android-app-pentesting/avd-android-virtual-device.md",
+     "section": "Verify root (debuggable images allow `adb root`)",
+     "similarity": 0.7369,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "adb root\nadb shell whoami  # expect: root\n```\n\nNotes\n- System image flavors: google_apis (debuggable, allows adb root), google_apis_playstore (not rootable), aosp/default (lightweight).\n- Build types: userdebug often allows `adb root` on debug-capable images. Play Store images are production builds and block root.\n- On x86_64 hosts, prefer an x86/x86_64 system image. Some Android 11-era Google images provided per-app ARM translation, but availability and supported ABIs vary by emulator and image release.<sup>[[3]](#references)</sup> That translation runs many ARM-only applications inside an x86 system image; it is not the same as full-system ARM64 emulation, which older emulator releases did not provide for newer API images on x86_64 hosts."
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/mobile-pentesting/android-app-pentesting/firmware-level-zygote-backdoor-libandroid_runtime.md",
+     "section": "Quick rooted-device triage",
+     "similarity": 0.7113,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "```bash\nadb shell getprop ro.build.fingerprint\nadb shell 'for f in /system/lib*/libandroid_runtime.so /system/lib*/libmedia_jni.so; do [ -e \"$f\" ] && sha256sum \"$f\"; done'\nadb pull /system/lib64/libandroid_runtime.so . 2>/dev/null || adb pull /system/lib/libandroid_runtime.so .\nstrings -a libandroid_runtime.so | rg 'AK_CPP|com.action.SystemOptimizeService|com.action.SystemProtectService|vndx_10x|com.ak.test.Main'\nadb shell logcat -d | rg 'AK_CPP|SystemOptimizeService|SystemProtectService'\n```\n\nIf the firmware ships as `super.img`, extract the dynamic partitions first (`simg2img` when needed, then `lpunpack`) and diff the resulting `system*.img` contents against a trusted factory image."
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/network-services-pentesting/5555-android-debug-bridge.md",
+     "section": "References",
+     "similarity": 0.7072,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "- [1] [Android Developers – Android Debug Bridge (adb)](https://developer.android.com/studio/command-line/adb)\n- [2] [AOSP – ADB over Wi‑Fi, pairing and mDNS service names](https://android.googlesource.com/platform/packages/modules/adb/+/refs/tags/android-vts-15.0_r2/docs/dev/adb_wifi.md)\n\n{{#include ../banners/hacktricks-training.md}}"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/network-services-pentesting/5555-android-debug-bridge.md",
+     "section": "Code execution and payload delivery",
+     "similarity": 0.7011,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "- Install and auto-grant runtime permissions:\n  ```bash\n  adb install -r -g payload.apk         # -g grants all runtime perms declared in manifest\n  adb shell monkey -p <pkg> -c android.intent.category.LAUNCHER 1\n  ```\n- Start activities/services/broadcasts directly:\n  ```bash\n  adb shell am start -n <pkg>/<activity>\n  adb shell am startservice -n <pkg>/<service>\n  adb shell am broadcast -a <action>\n  ```"
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/mobile-pentesting/android-app-pentesting/adb-commands.md",
+     "section": "Connection",
+     "similarity": 0.7009,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "```\nadb devices\n```\n\nThis will list the connected devices; if \"_**unathorised**_\" appears, this means that you have to **unblock** your **mobile** and **accept** the connection.\n\nThis indicates to the device that it has to start and adb server in port 5555:\n\n```\nadb tcpip 5555\n```\n\nConnect to that IP and that Port:\n\n```\nadb connect <IP>:<PORT>\n```\n\nIf you get an error like the following in a Virtual Android software (like Genymotion):\n\n```\nadb server version (41) doesn't match this client (36); killing...\n```\n\nIt's because you are trying to connect to an ADB server with a different version. Just try to find the adb binary the software is using (go to `C:\\Program Files\\Genymobile\\Genymotion` and search for adb.exe)"
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:11"
+ "updated": "2026-11-10 23:12"
 }
