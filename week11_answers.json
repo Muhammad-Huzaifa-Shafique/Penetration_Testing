@@ -1330,7 +1330,106 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q15",
+   "question": "what is a padding oracle, and what makes a system vulnerable to one?",
+   "expect": "answer",
+   "kind": "HackTricks",
+   "files": [
+    "hacktricks/src/crypto/symmetric/README.md"
+   ],
+   "evidence": [
+    "different errors/timings for bad padding",
+    "you may have a padding oracle",
+    "if the server reveals (directly or indirectly) whether decrypted plaintext has valid PKCS#7 padding"
+   ],
+   "must": [
+    "padding oracle"
+   ],
+   "expected": "A padding oracle exists when, in CBC mode, the server reveals (directly or indirectly) whether decrypted plaintext has valid PKCS#7 padding. The oracle can be a specific error message, a different HTTP status or response size, or a timing difference. With one you can often decrypt ciphertext without the key, or construct a ciphertext that decrypts to chosen plaintext when you can submit crafted preceding blocks or IVs and the application accepts the resulting validly padded message. In short, a system is exposed if it lets a client tell valid padding from invalid padding.",
+   "seconds": 78.6,
+   "answer": "A padding oracle is a system that leaks differences in padding validation [1][5]. This can occur when the system exposes different errors or timings for bad padding [4][5]. \n\nA system is vulnerable to a padding oracle if it allows the deprecated `Basic128Rsa15` policy [2], or if it uses CBC and exposes valid padding vs invalid padding [5].",
+   "truncated": false,
+   "prompt_tokens": 1282,
+   "answer_tokens": 77,
+   "passage_numbers": [
+    4,
+    5
+   ],
+   "passage_in_context": true,
+   "page_in_context": true,
+   "cited": [
+    1,
+    2,
+    4,
+    5
+   ],
+   "cites_passage": true,
+   "must_found": [
+    "padding oracle"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/crypto/symmetric/README.md",
+     "section": "Practical exploitation",
+     "similarity": 0.7301,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "PadBuster is the classic tool:\n\n{{#ref}}\nhttps://github.com/AonCyberLabs/PadBuster\n{{#endref}}\n\nExample:\n\n```bash\nperl ./padBuster.pl http://10.10.10.10/index.php \"RVJDQrwUdTRWJUVUeBKkEA==\" 16 \\\n  -encoding 0 -cookies \"login=RVJDQrwUdTRWJUVUeBKkEA==\"\n```\n\nNotes:\n\n- Block size is often `16` for AES.\n- `-encoding 0` means Base64.\n- Use `-error` if the oracle is a specific string."
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/network-services-pentesting/4840-pentesting-opc-ua.md",
+     "section": "Attacking legacy security policies (Basic128Rsa15)",
+     "similarity": 0.7052,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "- **Bleichenbacher-style oracle:** Systems that still allow the deprecated `Basic128Rsa15` policy (often toggled via build flags such as `CMPOPCUASTACK_ALLOW_SHA1_BASED_SECURITY`) leak padding validation differences. Exploit this by flooding `CreateSession` / `OpenSecureChannel` handshakes with crafted PKCS#1 v1.5 blobs to recover the server certificate’s private key, then impersonate the server or decrypt traffic.<sup>[[7]](#references)</sup>\n- **Authentication bypass:** OPC Foundation’s .NET Standard stack prior to 1.5.374.158 (CVE-2024-42512) and dependent products let unauthenticated attackers force that legacy policy and subsequently skip application-level authentication. Once you own the key material you can present arbitrary `UserIdentityTokens`, replay signed `ActivateSession` requests, and operate the plant as a trusted engineering workstation.<sup>[[7]](#references)</sup>\n- **Operational workflow:**\n  1. Enumerate policies with `GetEndpoints` and note any `Basic128Rsa15` entries.\n  2. Negotiate that policy explicitly (`SecurityPolicyUri` in `CreateSession`), then run your oracle loop until the recovered key validates.\n  3. Abuse the key to forge a high-privilege session, switch roles, or silently downgrade other clients by acting as a rogue reverse proxy.\n- **CODESYS Runtime Toolkit (<3.5.21.0)** re-enabled Basic128Rsa15 whenever integrators compile with `CMPOPCUASTACK_ALLOW_SHA1_BASED_SECURITY`. Flip that flag, re-run the oracle workflow above, and you can leak the"
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/network-services-pentesting/pentesting-web/special-http-headers.md",
+     "section": "Safe patch-oracle detection with `Content-Encoding: identity`",
+     "similarity": 0.6979,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "When the dangerous value is known to crash the service, look for a **patch behavior oracle** instead of replaying the destructive request. A useful pattern is to send a benign body with `Content-Encoding: identity`:\n\n```http\nPOST / HTTP/1.1\nHost: target\nContent-Encoding: identity\nContent-Length: 10\n\nAAAAAAAAAA\n```\n\nWhy this is useful:\n\n- A **patched** target may reject **any** request that has both a body and a **non-empty** `Content-Encoding` header, often with **`415 Unsupported Media Type`**.\n- A **vulnerable** target may still process the `identity` request normally and return app-specific codes such as `200`, `302`, `401`, or `404`.\n- If the response still fingerprints the product (for example via `Server`), you can often turn this into a **production-safe vulnerable/patched detector** without ever sending the crashing encoding.\n\nThis pattern was useful in SolarWinds **Serv-U** (`<= 15.5.4.108`), where `POST` + body + `Content-Encoding: deflate` reached an unsafe in-memory deflate decompressor and reliably crashed the process, while the hotfix added a generic `415` gate for requests carrying a body plus any non-empty `Content-Encoding` header.<sup>[[6]](#references)[[7]](#references)</sup>"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/crypto/symmetric/README.md",
+     "section": "What to look for in CTFs",
+     "similarity": 0.6887,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "- **Mode misuse**: ECB patterns, CBC malleability, CTR/GCM nonce reuse.\n- **Padding oracles**: different errors/timings for bad padding.\n- **MAC confusion**: using CBC-MAC with variable-length messages, or MAC-then-encrypt mistakes.\n- **XOR everywhere**: stream ciphers and custom constructions often reduce to XOR with a keystream."
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/crypto/symmetric/README.md",
+     "section": "CBC: Cipher Block Chaining",
+     "similarity": 0.6865,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "- CBC is **malleable**: flipping bits in `C[i-1]` flips predictable bits in `P[i]`, while also garbling `P[i-1]`. Modifying the IV targets the first plaintext block without garbling an earlier plaintext block.\n- If the system exposes valid padding vs invalid padding, you may have a **padding oracle**."
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:07"
+ "updated": "2026-11-10 23:08"
 }
