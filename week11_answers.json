@@ -109,6 +109,100 @@
    "error": null
   },
   {
+   "id": "q02",
+   "question": "what does the -k flag do in curl, and why would I avoid using it normally?",
+   "expect": "answer",
+   "kind": "man page",
+   "files": [
+    "manpages/curl.man.txt"
+   ],
+   "evidence": [
+    "By default, every secure connection curl makes is verified",
+    "using this option makes the transfer insecure"
+   ],
+   "must": [
+    "insecure"
+   ],
+   "expected": "`-k`, `--insecure` makes curl skip the verification step of a secure connection and proceed without checking. Normally, for TLS, curl verifies that the server's certificate contains the right name for the host in the URL and has been signed by a CA certificate in the cert store; for SFTP and SCP the option makes curl skip the known_hosts verification instead. The man page warns that using this option makes the transfer insecure, which is the reason to avoid it normally.",
+   "seconds": 125.4,
+   "answer": "According to [2], the -k, --insecure flag \"makes the transfer insecure\" and \"trusts responses and allows for example HSTS and Alt-Svc information to be stored and used subsequently\". This means that using -k can make curl trust and use information from malicious servers.\n\nYou would avoid using it normally because it makes the transfer insecure, as stated in [2].",
+   "truncated": false,
+   "prompt_tokens": 1742,
+   "answer_tokens": 79,
+   "passage_numbers": [
+    2
+   ],
+   "passage_in_context": true,
+   "page_in_context": true,
+   "cited": [
+    2
+   ],
+   "cites_passage": true,
+   "must_found": [
+    "insecure"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "manpages/curl.man.txt",
+     "section": "OPTIONS",
+     "similarity": 0.7107,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "PKCS#11  URI  is  provided,  then  the --engine option is set as\n              \"pkcs11\" if none was provided and the --key-type option  is  set\n              as \"ENG\" if none was provided.\n\nIf  curl is built against Secure Transport or Schannel then this\n              option is ignored for TLS protocols (HTTPS, etc). Those backends\n              expect the private key to be already present in the keychain  or\n              PKCS#12 file containing the certificate.\n\nIf --key is provided several times, the last set value is used.\n\nExample:\n               curl --cert certificate --key here https://example.com\n\nSee also --key-type and -E, --cert.\n\n--krb <level>\n              (FTP)  Enable Kerberos authentication and use. The level must be\n              entered and should be one of 'clear', 'safe', 'confidential', or\n              'private'. Should you use a level that  is  not  one  of  these,\n              'private' is used.\n\nIf --krb is provided several times, the last set value is used.\n\nExample:\n               curl --krb clear ftp://example.com/\n\nSee  also --delegation and --ssl. --krb requires that the under‐\n              lying libcurl was built to support Kerberos.\n\n--libcurl <file>\n              Append this option to any ordinary curl command  line,  and  you\n              get  libcurl-using  C  source code written to the file that does\n              the equivalent of what your command-line operation does!"
+    },
+    {
+     "n": 2,
+     "source": "manpages/curl.man.txt",
+     "section": "OPTIONS",
+     "similarity": 0.7039,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "stored  in  the\n              user's home directory in the \".ssh\" subdirectory, which contains\n              host names and their public keys.\n\nWARNING: using this option makes the transfer insecure.\n\nWhen  curl  uses secure protocols it trusts responses and allows\n              for example HSTS and Alt-Svc information to be stored  and  used\n              subsequently.  Using  -k, --insecure can make curl trust and use\n              such information from malicious servers.\n\nProviding -k, --insecure multiple times  has  no  extra  effect.\n              Disable it again with --no-insecure.\n\nExample:\n               curl --insecure https://example.com\n\nSee also --proxy-insecure, --cacert and --capath.\n\n--interface <name>\n              Perform  an operation using a specified interface. You can enter\n              interface name, IP address or host name. An example  could  look\n              like:\n\ncurl --interface eth0:1 https://www.example.com/\n\nOn  Linux  it can be used to specify a VRF, but the binary needs\n              to either have CAP_NET_RAW or to be run as root.  More  informa‐\n              tion   about  Linux  VRF:  https://www.kernel.org/doc/Documenta‐\n              tion/networking/vrf.txt\n\nIf --interface is provided several times, the last set value  is\n              used.\n\nExample:\n               curl --interface eth0 https://example.com\n\nSee also --dns-interface."
+    },
+    {
+     "n": 3,
+     "source": "manpages/curl.man.txt",
+     "section": "OPTIONS",
+     "similarity": 0.6873,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "as \"\\:\" so that it is not  recognized  as  the\n              password delimiter. Similarly, you must escape the character \"\\\"\n              as \"\\\\\" so that it is not recognized as an escape character.\n\nIf  curl is built against OpenSSL library, and the engine pkcs11\n              is available, then a PKCS#11 URI (RFC 7512) can be used to spec‐\n              ify a certificate located in a PKCS#11 device. A  string  begin‐\n              ning  with  \"pkcs11:\"  is  interpreted  as  a  PKCS#11 URI. If a\n              PKCS#11 URI is provided, then the  --engine  option  is  set  as\n              \"pkcs11\"  if none was provided and the --cert-type option is set\n              as \"ENG\" if none was provided.\n\n(iOS and macOS only) If curl is built against Secure  Transport,\n              then the certificate string can either be the name of a certifi‐\n              cate/private  key in the system or user keychain, or the path to\n              a PKCS#12-encoded certificate and private key. If  you  want  to\n              use  a  file  from the current directory, please precede it with\n              \"./\" prefix, in order to avoid confusion with a nickname."
+    },
+    {
+     "n": 4,
+     "source": "manpages/curl.man.txt",
+     "section": "OPTIONS",
+     "similarity": 0.6839,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "Windows\n              checked for _curlrc only.\n\n-K, --config can be used several times in a command line\n\nExample:\n               curl --config file.txt https://example.com\n\nSee also -q, --disable.\n\n--connect-timeout <fractional seconds>\n              Maximum time in seconds that  you  allow  curl's  connection  to\n              take.   This  only  limits the connection phase, so if curl con‐\n              nects within the given period it continues - if not it exits.\n\nThis option accepts decimal values. The decimal value  needs  to\n              be provided using a dot (.) as decimal separator - not the local\n              version even if it might be using another separator.\n\nThe  connection phase is considered complete when the DNS lookup\n              and requested TCP, TLS or QUIC handshakes are done.\n\nIf --connect-timeout is provided several  times,  the  last  set\n              value is used.\n\nExamples:\n               curl --connect-timeout 20 https://example.com\n               curl --connect-timeout 3.14 https://example.com\n\nSee also -m, --max-time.\n\n--connect-to <HOST1:PORT1:HOST2:PORT2>"
+    },
+    {
+     "n": 5,
+     "source": "manpages/curl.man.txt",
+     "section": "PROGRESS METER",
+     "similarity": 0.6832,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "curl normally displays a progress meter during  operations,  indicating\n       the  amount  of  transferred  data,  transfer speeds and estimated time\n       left, etc. The progress meter displays the transfer rate in  bytes  per\n       second.  The suffixes (k, M, G, T, P) are 1024 based. For example 1k is\n       1024 bytes. 1M is 1048576 bytes.\n\ncurl displays this data to the terminal by default, so  if  you  invoke\n       curl  to do an operation and it is about to write data to the terminal,\n       it disables the progress meter as otherwise it would mess up the output\n       mixing progress meter and response data.\n\nIf you want a progress meter for HTTP POST or PUT requests, you need to\n       redirect the response output to a file, using shell redirect  (>),  -o,\n       --output or similar.\n\nThis  does  not apply to FTP upload as that operation does not spit out\n       any response data to the terminal.\n\nIf you prefer a progress  \"bar\"  instead  of  the  regular  meter,  -#,\n       --progress-bar  is your friend. You can also disable the progress meter\n       completely with the -s, --silent option."
+    }
+   ],
+   "error": null
+  },
+  {
    "id": "q07",
    "question": "what does the whatweb tool actually identify on a website?",
    "expect": "answer",
@@ -204,5 +298,5 @@
    "error": null
   }
  ],
- "updated": "2026-11-10 18:21"
+ "updated": "2026-11-10 18:23"
 }
