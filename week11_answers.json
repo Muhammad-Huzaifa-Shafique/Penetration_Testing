@@ -23,6 +23,92 @@
  },
  "questions": [
   {
+   "id": "q01",
+   "question": "what is ethical hacking",
+   "expect": "decline",
+   "kind": null,
+   "files": [],
+   "evidence": [],
+   "must": [],
+   "expected": "The corpus does not define ethical hacking. Its only mention of the phrase is one passing reference to \"ethical hackers\" in the description of the StaCoAn mobile-app analysis tool (the run-together word \"ethicalhacking\" also appears inside a LinkedIn link in a reference list). The right response is to say the passages do not cover this, not to answer it from general knowledge.",
+   "seconds": 64.5,
+   "answer": "Unfortunately, the passages provided do not mention \"ethical hacking\" explicitly. However, [2] mentions \"red team\" and \"infiltration operator\", which implies a perspective on privacy and attribution from an attacker's point of view, but does not directly answer the question.\n\nA possible answer is that \"ethical hacking\" is implied by the context of authorized adversary-emulation labs, where exercises are run on a dedicated Linux lab host with Docker, and the goal is to reproduce observable architecture, not unauthorized compromise ([3]). This suggests that the student is working within a controlled environment, which is a key aspect of ethical hacking.",
+   "truncated": false,
+   "prompt_tokens": 945,
+   "answer_tokens": 126,
+   "passage_numbers": [],
+   "passage_in_context": null,
+   "page_in_context": null,
+   "cited": [
+    2,
+    3
+   ],
+   "cites_passage": null,
+   "must_found": [],
+   "declined": false,
+   "check_problems": [
+    "WARN: no citation, and little of it is in any passage (best: [3], 11%); maybe from memory"
+   ],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/privacy/anonymous-internet-access-techniques.md",
+     "section": "Anonymous Internet Access Technique Catalog",
+     "similarity": 0.6602,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "{{#include ../banners/hacktricks-training.md}}\n\nThis is the canonical access-path inventory. It covers protocol and operational **families**, not every vendor name. No Internet path guarantees anonymity: account, browser, endpoint, timing, payment, cloud-control-plane and physical evidence can defeat a perfect-looking route.\n\nEvery entry uses the same fields. “Procedure” means a lawful deployment or an owned-lab emulation. Where the real technique depends on compromising a router, stealing access or abusing an unwilling intermediary, the reproduction substitutes systems owned by the exercise."
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/privacy/README.md",
+     "section": "Offensive Privacy, Attribution Evasion and OPSEC",
+     "similarity": 0.6524,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "{{#include ../banners/hacktricks-training.md}}\n\nThis section studies privacy from the viewpoint of a red team, an intrusion operator and the defender trying to reconstruct that operator. **Anonymity is not merely hiding an IP address.** Mature operations separate the people, endpoints, accounts, infrastructure, network paths, payloads and payments that could be joined into an attribution graph.\n\nThe material deliberately includes techniques reported in government and APT operations: operational-relay-box (ORB) networks, compromised edge devices, residential exits, redirector tiers, fast flux, domain fronting, dead-drop resolvers, nearby wireless pivots, covert drop devices, satellite-link abuse, false personas and financial layering. Each technique is presented as:\n\n1. the operational objective and ATT&CK mapping;\n2. the mechanism and trust boundaries;\n3. what every observer can still record;\n4. the mistakes and stable artifacts that defeat it;\n5. defensive telemetry, analytics and mitigations; and\n6. an authorized emulation using owned or explicitly scoped infrastructure.\n\nThis is therefore both an offensive tradecraft reference and a defender's attribution manual. The aim is to make advanced behavior understandable and testable, not to pretend that one commercial service makes an operator invisible."
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/privacy/authorized-adversary-emulation-labs.md",
+     "section": "Authorized Adversary-Emulation Labs",
+     "similarity": 0.6418,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "{{#include ../banners/hacktricks-training.md}}\n\nThese exercises reproduce **observable architecture**, not unauthorized compromise. Run them on a dedicated Linux lab host with Docker, no sensitive credentials and no route to third-party targets. The names are fixed so teardown is explicit.\n\n{% hint style=\"danger\" %}\nDo not replace the owned containers, APs, routers, accounts or synthetic transactions below with public proxies, a neighbor's Wi-Fi, a production CDN tenant you do not control, or real illicit funds. Written authorization must cover every system and radio environment.\n{% endhint %}"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/privacy/network-privacy-and-anonymous-connectivity.md",
+     "section": "Network Privacy & Anonymous Connectivity",
+     "similarity": 0.6411,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "{{#include ../banners/hacktricks-training.md}}\n\nNetwork privacy is a routing decision, not a complete identity. Select a path by asking who should be unable to connect **source**, **destination**, **content**, and **timing**.\n\nFor the normalized inventory—`Pros`, `Cons`, step-by-step `Procedure`, and `Detection` for every access-path family—start with the [Anonymous Internet Access Technique Catalog](anonymous-internet-access-techniques.md). This page expands the common deployable options."
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/privacy/privacy-operating-systems.md",
+     "section": "Privacy Operating Systems",
+     "similarity": 0.6407,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "{{#include ../banners/hacktricks-training.md}}\n\nPrivacy-focused operating systems reduce routing and persistence mistakes, but none can compensate for identifying behavior or compromised hardware."
+    }
+   ],
+   "error": null
+  },
+  {
    "id": "q07",
    "question": "what does the whatweb tool actually identify on a website?",
    "expect": "answer",
@@ -118,5 +204,5 @@
    "error": null
   }
  ],
- "updated": "2026-11-10 18:11"
+ "updated": "2026-11-10 18:21"
 }
