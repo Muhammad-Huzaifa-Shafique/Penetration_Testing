@@ -298,6 +298,100 @@
    "error": null
   },
   {
+   "id": "q04",
+   "question": "what does sudo -l show me about my own account?",
+   "expect": "answer",
+   "kind": "man page",
+   "files": [
+    "manpages/sudo.man.txt"
+   ],
+   "evidence": [
+    "If no command is specified, list the privileges for the"
+   ],
+   "must": [
+    "-l"
+   ],
+   "expected": "With no command given, `sudo -l` lists the privileges for the invoking user (or the user named with `-U`) on the current host. Giving `-l` more than once uses a longer, more verbose format if the security policy supports it. If a command is named and the policy permits it, sudo displays the command's fully-qualified path along with any arguments; if the command is named but not allowed, sudo exits with status 1.",
+   "seconds": 221.1,
+   "answer": "According to [1], \"sudo allows a permitted user to execute a command as the superuser or another user, as specified by the security policy.\" However, it does not explicitly state what information sudo -l shows about your own account.\n\nAccording to [2], \"If the -l option was specified without a command, sudo will exit with a value of 0 if the user is allowed to run sudo and they authenticated successfully (as required by the security policy).\" This implies that sudo -l will show you information about your account if you are allowed to run sudo, but it does not specify what that information is.\n\nSince the passages do not contain the answer, I must say that the information about what sudo -l shows about your own account is missing.",
+   "truncated": false,
+   "prompt_tokens": 1546,
+   "answer_tokens": 154,
+   "passage_numbers": [],
+   "passage_in_context": false,
+   "page_in_context": true,
+   "cited": [
+    1,
+    2
+   ],
+   "cites_passage": false,
+   "must_found": [
+    "-l"
+   ],
+   "declined": false,
+   "check_problems": [
+    "WARN: [1] does not contain -l (it is in [2][3])"
+   ],
+   "passages": [
+    {
+     "n": 1,
+     "source": "manpages/sudo.man.txt",
+     "section": "DESCRIPTION",
+     "similarity": 0.7243,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "sudo allows a permitted user to execute a command as the  superuser  or\n       another user, as specified by the security policy.  The invoking user's\n       real  (not  effective)  user-ID is used to determine the user name with\n       which to query the security policy.\n\nsudo supports a plugin architecture for  security  policies,  auditing,\n       and  input/output  logging.   Third  parties can develop and distribute\n       their own plugins to work seamlessly with the sudo front-end.  The  de‐\n       fault  security  policy  is  sudoers,  which is configured via the file\n       /etc/sudoers, or via LDAP.  See the “Plugins” section for more informa‐\n       tion.\n\nThe security policy determines what privileges, if any, a user  has  to\n       run  sudo.   The  policy may require that users authenticate themselves\n       with a password or another authentication mechanism.  If authentication\n       is required, sudo will exit if  the  user's  password  is  not  entered\n       within  a  configurable time limit.  This limit is policy-specific; the\n       default password prompt timeout for the sudoers security  policy  is  0\n       minutes."
+    },
+    {
+     "n": 2,
+     "source": "manpages/sudo.man.txt",
+     "section": "EXIT VALUE",
+     "similarity": 0.7135,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "Upon  successful execution of a command, the exit status from sudo will\n       be the exit status of the program that was executed.   If  the  command\n       terminated  due  to receipt of a signal, sudo will send itself the same\n       signal that terminated the command.\n\nIf the -l option was specified without a command, sudo will exit with a\n       value of 0 if the user is allowed to run sudo  and  they  authenticated\n       successfully  (as  required  by  the security policy).  If a command is\n       specified with the -l option, the exit value will  only  be  0  if  the\n       command is permitted by the security policy, otherwise it will be 1.\n\nIf there is an authentication failure, a configuration/permission prob‐\n       lem,  or  if  the  given  command cannot be executed, sudo exits with a\n       value of 1.  In the latter case, the error string  is  printed  to  the\n       standard  error.   If  sudo  cannot  stat(2) one or more entries in the\n       user's PATH, an error is printed to the standard error.  (If the direc‐\n       tory does not exist or if it is not really a directory,  the  entry  is\n       ignored  and no error is printed.)  This should not happen under normal\n       circumstances.   The  most  common  reason  for   stat(2)   to   return\n       “permission denied” is if you are running an automounter and one of the\n       directories in your PATH is on a machine that is currently unreachable."
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/linux-hardening/linux-basics/linux-privilege-escalation/README.md",
+     "section": "NOPASSWD",
+     "similarity": 0.6947,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "Sudo configuration might allow a user to execute some command with another user's privileges without knowing the password.\n\n```\n$ sudo -l\nUser demo may run the following commands on crashlab:\n    (root) NOPASSWD: /usr/bin/vim\n```\n\nIn this example the user `demo` can run `vim` as `root`, it is now trivial to get a shell by adding an ssh key into the root directory or by calling `sh`.\n\n```\nsudo vim -c '!sh'\n```"
+    },
+    {
+     "n": 4,
+     "source": "manpages/sudo.man.txt",
+     "section": "DESCRIPTION",
+     "similarity": 0.6862,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "The security policy may restrict  the  user's  ability  to  set\n               timeouts.   The  sudoers  policy  requires  that user-specified\n               timeouts be explicitly enabled.\n\n-u user, --user=user\n               Run the command as a user other than the  default  target  user\n               (usually  root).   The  user may be either a user name or a nu‐\n               meric user-ID (UID) prefixed with the ‘#’ character (e.g., ‘#0’\n               for UID 0).  When running commands as a UID,  many  shells  re‐\n               quire that the ‘#’ be escaped with a backslash (‘\\’).  Some se‐\n               curity  policies may restrict UIDs to those listed in the pass‐\n               word database.  The sudoers policy allows UIDs that are not  in\n               the  password  database  as  long as the targetpw option is not\n               set.  Other security policies may not support this.\n\n-V, --version\n               Print the sudo version string as well as the version string  of\n               any  configured plugins.  If the invoking user is already root,\n               the -V option will display the options passed to configure when\n               sudo was built; plugins may display additional information such\n               as default options."
+    },
+    {
+     "n": 5,
+     "source": "manpages/sudo.man.txt",
+     "section": "SECURITY NOTES",
+     "similarity": 0.6858,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "by the user or that reside in a directory that is writable  by\n       the  user.   If  the user can modify or replace the command there is no\n       way to limit what additional commands they can run.\n\nBy default, sudo will only log the command it explicitly  runs.   If  a\n       user runs a command such as ‘sudo su’ or ‘sudo sh’, subsequent commands\n       run  from  that  shell  are not subject to sudo's security policy.  The\n       same is true for commands that offer shell escapes (including most edi‐\n       tors).  If I/O logging is enabled, subsequent commands will have  their\n       input  and/or output logged, but there will not be traditional logs for\n       those commands. Because of this, care must be taken when  giving  users\n       access  to  commands via sudo to verify that the command does not inad‐\n       vertently give the user an effective root shell.   For  information  on\n       ways  to  address  this,  see  the  Preventing shell escapes section in\n       sudoers(5)."
+    }
+   ],
+   "error": null
+  },
+  {
    "id": "q07",
    "question": "what does the whatweb tool actually identify on a website?",
    "expect": "answer",
@@ -393,5 +487,5 @@
    "error": null
   }
  ],
- "updated": "2026-11-10 18:26"
+ "updated": "2026-11-10 18:29"
 }
