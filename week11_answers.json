@@ -1429,7 +1429,96 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q16",
+   "question": "according to the corpus's general pentesting methodology page, what is the very first thing to check before anything else?",
+   "expect": "answer",
+   "kind": "HackTricks",
+   "files": [
+    "hacktricks/src/generic-methodologies-and-resources/pentesting-methodology.md"
+   ],
+   "evidence": [
+    "Do you have physical access to the machine"
+   ],
+   "must": [
+    "physical access"
+   ],
+   "expected": "Whether you have physical access to the machine you want to attack. The page lists it as step 0 (\"0- Physical Attacks\"), ahead of step 1 (discovering hosts inside the network or the company's assets), and points to separate notes on physical attacks and on escaping from GUI applications. Step 1 then depends on whether the test is internal (finding hosts inside the company network) or external (finding assets of the company on the internet).",
+   "seconds": 47.7,
+   "answer": "According to [2], the very first thing to check before anything else is to see if there is a fancy exploit for any running service. If not, then look for common misconfigurations in each service running.",
+   "truncated": false,
+   "prompt_tokens": 984,
+   "answer_tokens": 44,
+   "passage_numbers": [],
+   "passage_in_context": false,
+   "page_in_context": true,
+   "cited": [
+    2
+   ],
+   "cites_passage": false,
+   "must_found": [],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "manpages/find.man.txt",
+     "section": "OPTIONS",
+     "similarity": 0.7308,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "em  type  FOO\n                     which  is  not known (that is, present in `/etc/mtab') at\n                     the time find starts, that  predicate  is  equivalent  to\n                     -false.\n\n3      At this optimisation level, the full cost-based query op‐\n                     timiser  is  enabled.   The order of tests is modified so\n                     that cheap (i.e. fast) tests are performed first and more\n                     expensive ones are performed later, if necessary.  Within\n                     each cost band, predicates are evaluated earlier or later\n                     according to whether they are likely to succeed  or  not.\n                     For -o, predicates which are likely to succeed are evalu‐\n                     ated  earlier, and for -a, predicates which are likely to\n                     fail are evaluated earlier."
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-methodology.md",
+     "section": "**5-** Pentesting Services",
+     "similarity": 0.71,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "If there isn't any fancy exploit for any running service, you should look for **common misconfigurations in each service running.**\n\n**Inside this book you will find a guide to pentest the most common services** (and others that aren't so common)**. Please, search in the left index the** _**PENTESTING**_ **section** (the services are ordered by their default ports).\n\n**I want to make a special mention of the** [**Pentesting Web**](../network-services-pentesting/pentesting-web/index.html) **part (as it is the most extensive one).**\n\n**If your service is not inside the index, search in Google** for other tutorials and **let me know if you want me to add it.** If you **can't find anything** in Google, perform your **own blind pentesting**, you could start by **connecting to the service, fuzzing it and reading the responses** (if any)."
+    },
+    {
+     "n": 3,
+     "source": "manpages/find.man.txt",
+     "section": "OPTIONS",
+     "similarity": 0.7099,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "the traditional behaviour.  Expressions are reordered  so\n                     that  tests based only on the names of files (for example\n                     -name and -regex) are performed first.\n\n2      Any -type or -xtype tests are performed after  any  tests\n                     based  only  on  the names of files, but before any tests\n                     that require information from the inode.  On many  modern\n                     versions  of  Unix,  file types are returned by readdir()\n                     and so these predicates are faster to evaluate than pred‐\n                     icates which need to stat the file first.  If you use the\n                     -fstype FOO predicate and specify a filesystem  type  FOO\n                     which  is  not known (that is, present in `/etc/mtab') at\n                     the time find starts, that  predicate  is  equivalent  to\n                     -false."
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/network-services-pentesting/pentesting-web/web-api-pentesting.md",
+     "section": "API Pentesting Methodology Summary",
+     "similarity": 0.7064,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "Pentesting APIs involves a structured approach to uncovering vulnerabilities. This guide encapsulates a comprehensive methodology, emphasizing practical techniques and tools.<sup>[[1]](#references)</sup>"
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/pentesting-web/saml-attacks/README.md",
+     "section": "Basic Information",
+     "similarity": 0.7039,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "The first part of the referenced SAML testing methodology covers request collection, decoding, and baseline validation checks that should precede the attacks on this page.<sup>[[14]](#references)</sup>\n\n{{#ref}}\nsaml-basics.md\n{{#endref}}"
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:08"
+ "updated": "2026-11-10 23:09"
 }
