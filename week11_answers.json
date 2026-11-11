@@ -1803,7 +1803,90 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q20",
+   "question": "how do I write a snort rule to detect port scans?",
+   "expect": "decline",
+   "kind": null,
+   "files": [],
+   "evidence": [],
+   "must": [],
+   "expected": "The corpus has no Snort content at all: no man page, and no HackTricks mention. It does cover Suricata, a different IDS/IPS engine, in a few pages, so if the question meant any network intrusion-detection tool, the right response is to say Snort specifically is not covered and offer what the corpus says about Suricata instead of guessing at Snort's rule syntax.",
+   "seconds": 188.6,
+   "answer": "Unfortunately, the provided passages do not contain information on how to write a Snort rule to detect port scans. The passages cover various topics such as Nmap scanning techniques, Sniffle firmware flashing, and Wireshark filtering, but do not include Snort rule creation.\n\nHowever, [5] mentions that UDP scans can be combined with a TCP scan type, but this is not directly related to writing a Snort rule.\n\nTo write a Snort rule to detect port scans, you would typically need to consult Snort's documentation or a Snort-specific resource, which is not included in the provided passages.",
+   "truncated": false,
+   "prompt_tokens": 1665,
+   "answer_tokens": 124,
+   "passage_numbers": [],
+   "passage_in_context": null,
+   "page_in_context": null,
+   "cited": [
+    5
+   ],
+   "cites_passage": null,
+   "must_found": [],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "manpages/nmap.man.txt",
+     "section": "PORT SCANNING TECHNIQUES",
+     "similarity": 0.7465,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "could be open, or perhaps packet filters are blocking the\n           communication. Version detection (-sV) can be used to help\n           differentiate the truly open ports from the filtered ones.\n\nA big challenge with UDP scanning is doing it quickly. Open and\n           filtered ports rarely send any response, leaving Nmap to time out\n           and then conduct retransmissions just in case the probe or response\n           were lost. Closed ports are often an even bigger problem. They\n           usually send back an ICMP port unreachable error. But unlike the\n           RST packets sent by closed TCP ports in response to a SYN or\n           connect scan, many hosts rate limit ICMP port unreachable messages\n           by default. Linux and Solaris are particularly strict about this.\n           For example, the Linux 2.4.20 kernel limits destination unreachable\n           messages to one per second (in net/ipv4/icmp.c).\n\nNmap detects rate limiting and slows down accordingly to avoid\n           flooding the network with useless packets that the target machine\n           will drop. Unfortunately, a Linux-style limit of one packet per\n           second makes a 65,536-port scan take more than 18 hours. Ideas for\n           speeding your UDP scans up include scanning more hosts in parallel,\n           doing a quick scan of just the popular ports first, scanning from\n           behind the firewall, and using --host-timeout to skip slow hosts."
+    },
+    {
+     "n": 2,
+     "source": "manpages/nmap.man.txt",
+     "section": "PORT SPECIFICATION AND SCAN ORDER",
+     "similarity": 0.7407,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "65535. Scanning port zero is allowed if you specify it explicitly.\n           For IP protocol scanning (-sO), this option specifies the protocol\n           numbers you wish to scan for (0–255).\n\nWhen scanning a combination of protocols (e.g. TCP and UDP), you\n           can specify a particular protocol by preceding the port numbers by\n           T: for TCP, U: for UDP, S: for SCTP, or P: for IP Protocol. The\n           qualifier lasts until you specify another qualifier. For example,\n           the argument -p U:53,111,137,T:21-25,80,139,8080 would scan UDP\n           ports 53, 111,and 137, as well as the listed TCP ports. Note that\n           to scan both UDP and TCP, you have to specify -sU and at least one\n           TCP scan type (such as -sS, -sF, or -sT). If no protocol qualifier\n           is given, the port numbers are added to all protocol lists.  Ports\n           can also be specified by name according to what the port is\n           referred to in the nmap-services. You can even use the wildcards *\n           and ?  with the names. For example, to scan FTP and all ports whose\n           names begin with “http”, use -p ftp,http*. Be careful about shell\n           expansions and quote the argument to -p if unsure."
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/todo/radio-hacking/pentesting-ble-bluetooth-low-energy.md",
+     "section": "Sniffing with Sniffle (CC26x2/CC1352)",
+     "similarity": 0.7398,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "local/lib/wireshark/extcap\n  popd\nelse\n  echo \"[+] - Sniffle already installed at 1.10.0\"\nfi\n```\n\n</details>\n\nFlash Sonoff with Sniffle firmware (ensure your serial device matches, e.g. /dev/ttyUSB0):\n\n```bash\npushd /opt/sniffle/\nwget https://github.com/nccgroup/Sniffle/releases/download/v1.10.0/sniffle_cc1352p1_cc2652p1_1M.hex\ngit clone https://github.com/sultanqasim/cc2538-bsl.git\ncd cc2538-bsl\npython3 -m venv .venv\nsource .venv/bin/activate\npython3 -m pip install pyserial intelhex\npython3 cc2538-bsl.py -p /dev/ttyUSB0 --bootloader-sonoff-usb -ewv ../sniffle_cc1352p1_cc2652p1_1M.hex\ndeactivate\npopd\n```\n\nCapture in Wireshark via the Sniffle extcap and quickly pivot to state-changing writes by filtering:\n\n```text\n_ws.col.info contains \"Sent Write Command\"\n```\n\nThis highlights ATT Write Commands from the client; the handle and value often directly map to device actions (e.g., write 0x01 to a buzzer/alert characteristic, 0x00 to stop).\n\nSniffle CLI quick examples:\n\n```bash\npython3 scanner.py --output scan.pcap"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-network/README.md",
+     "section": "UDP",
+     "similarity": 0.7386,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "There are 2 options to scan an UDP port:\n\n- Send a **UDP packet** and check for the response _**ICMP unreachable**_ if the port is **closed** (in several cases ICMP will be **filtered** so you won't receive any information inf the port is close or open).\n- Send a **formatted datagrams** to elicit a response from a **service** (e.g., DNS, DHCP, TFTP, and others, as listed in _nmap-payloads_). If you receive a **response**, then, the port is **open**.\n\n**Nmap** will **mix both** options using \"-sV\" (UDP scans are very slow), but notice that UDP scans are slower than TCP scans:\n\n```bash"
+    },
+    {
+     "n": 5,
+     "source": "manpages/nmap.man.txt",
+     "section": "PORT SCANNING TECHNIQUES",
+     "similarity": 0.7357,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "help inventory UDP ports.\n\nUDP scan is activated with the -sU option. It can be combined with\n           a TCP scan type such as SYN scan (-sS) to check both protocols\n           during the same run.\n\nUDP scan works by sending a UDP packet to every targeted port. For\n           some common ports such as 53 and 161, a protocol-specific payload\n           is sent to increase response rate, but for most ports the packet is\n           empty unless the --data, --data-string, or --data-length options\n           are specified. If an ICMP port unreachable error (type 3, code 3)\n           is returned, the port is closed. Other ICMP unreachable errors\n           (type 3, codes 0, 1, 2, 9, 10, or 13) mark the port as filtered.\n           Occasionally, a service will respond with a UDP packet, proving\n           that it is open. If no response is received after retransmissions,\n           the port is classified as open|filtered. This means that the port\n           could be open, or perhaps packet filters are blocking the\n           communication. Version detection (-sV) can be used to help\n           differentiate the truly open ports from the filtered ones."
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:13"
+ "updated": "2026-11-10 23:16"
 }
