@@ -487,6 +487,102 @@
    "error": null
   },
   {
+   "id": "q06",
+   "question": "what does wget's --mirror option turn on?",
+   "expect": "answer",
+   "kind": "man page",
+   "files": [
+    "manpages/wget.man.txt"
+   ],
+   "evidence": [
+    "Turn on options suitable for mirroring",
+    "equivalent to -r -N -l inf --no-remove-listing"
+   ],
+   "must": [
+    "--mirror"
+   ],
+   "expected": "`-m`, `--mirror` turns on options suitable for mirroring: it turns on recursion and time-stamping, sets infinite recursion depth and keeps FTP directory listings. The man page says it is currently equivalent to `-r -N -l inf --no-remove-listing`.",
+   "seconds": 208.7,
+   "answer": "According to [1], the --mirror option is used in conjunction with other options, but its specific function is not described. However, [3] describes wget's mirroring capabilities, stating that wget can \"follow links in HTML, XHTML, and CSS pages, to create local versions of remote web sites, fully recreating the directory structure of the original site.\" This suggests that the --mirror option is related to this functionality, but the passage does not explicitly state what it turns on.\n\nA more relevant passage is [1], which describes the command using --mirror, --page-requisites, --convert-links, and --adjust-extension modes. This suggests that --mirror is one of the modes that enables mirroring, but the passage does not explicitly state what it turns on.\n\nUnfortunately, the passage does not provide a clear answer to what the --mirror option turns on.",
+   "truncated": false,
+   "prompt_tokens": 1573,
+   "answer_tokens": 176,
+   "passage_numbers": [],
+   "passage_in_context": false,
+   "page_in_context": true,
+   "cited": [
+    1,
+    3
+   ],
+   "cites_passage": false,
+   "must_found": [
+    "--mirror"
+   ],
+   "declined": false,
+   "check_problems": [
+    "WARN: only 17% of this sentence's wording is in [1]; not in [1]: conjunction, described, function, option, specific",
+    "WARN: [3] does not contain --mirror (it is in [1])"
+   ],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/generic-methodologies-and-resources/phishing-methodology/clone-a-website.md",
+     "section": "wget",
+     "similarity": 0.7067,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "The following command uses Wget's mirroring, page-requisite, link-conversion, and extension-adjustment modes, then serves the downloaded files from the current directory with Python's `http.server` module on port 8000.<sup>[[1]](#references)[[2]](#references)</sup>\n\n```bash\nwget --mirror --page-requisites --convert-links --adjust-extension <URL>\ncd <URL>\npython3 -m http.server 8000\n```"
+    },
+    {
+     "n": 2,
+     "source": "manpages/wget.man.txt",
+     "section": "OPTIONS",
+     "similarity": 0.6966,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "line.   For  example,  to  force  the  bar  output without\n           scrolling, use --progress=bar:force:noscroll.\n\n--show-progress\n           Force wget to display the progress bar in any verbosity.\n\nBy default, wget only displays the progress bar  in  verbose  mode.\n           One may however, want wget to display the progress bar on screen in\n           conjunction  with  any  other  verbosity modes like --no-verbose or\n           --quiet.  This is often a desired a property when invoking wget  to\n           download  several  small/large  files.   In such a case, wget could\n           simply be invoked with this parameter to get a much cleaner  output\n           on the screen.\n\nThis  option  will  also  force  the  progress bar to be printed to\n           stderr when used alongside the --output-file option.\n\n-N\n       --timestamping\n           Turn on time-stamping.\n\n--no-if-modified-since\n           Do not send If-Modified-Since header in -N mode.  Send  preliminary\n           HEAD request instead. This has only effect in -N mode.\n\n--no-use-server-timestamps\n           Don't set the local file's timestamp by the one on the server."
+    },
+    {
+     "n": 3,
+     "source": "manpages/wget.man.txt",
+     "section": "DESCRIPTION",
+     "similarity": 0.6876,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "GNU Wget is a free utility for non-interactive download of files from\n       the Web.  It supports HTTP, HTTPS, and FTP protocols, as well as\n       retrieval through HTTP proxies.\n\nWget is non-interactive, meaning that it can work in the background,\n       while the user is not logged on.  This allows you to start a retrieval\n       and disconnect from the system, letting Wget finish the work.  By\n       contrast, most of the Web browsers require constant user's presence,\n       which can be a great hindrance when transferring a lot of data.\n\nWget can follow links in HTML, XHTML, and CSS pages, to create local\n       versions of remote web sites, fully recreating the directory structure\n       of the original site.  This is sometimes referred to as \"recursive\n       downloading.\"  While doing that, Wget respects the Robot Exclusion\n       Standard (/robots.txt).  Wget can be instructed to convert the links in\n       downloaded files to point at the local files, for offline viewing.\n\nWget has been designed for robustness over slow or unstable network\n       connections; if a download fails due to a network problem, it will keep\n       retrying until the whole file has been retrieved.  If the server\n       supports regetting, it will instruct the server to continue the\n       download from where it left off."
+    },
+    {
+     "n": 4,
+     "source": "manpages/wget.man.txt",
+     "section": "OPTIONS",
+     "similarity": 0.6785,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "y type wget -Q2m -i\n           sites---download will be aborted after the file that  exhausts  the\n           quota is completely downloaded.\n\nSetting quota to 0 or to inf unlimits the download quota.\n\n--no-dns-cache\n           Turn  off  caching of DNS lookups.  Normally, Wget remembers the IP\n           addresses it looked up from DNS so it doesn't  have  to  repeatedly\n           contact  the DNS server for the same (typically small) set of hosts\n           it retrieves from.  This cache exists in memory only;  a  new  Wget\n           run will contact DNS again.\n\nHowever,  it  has  been  reported that in some situations it is not\n           desirable to cache host names, even for the duration  of  a  short-\n           running  application like Wget.  With this option Wget issues a new\n           DNS lookup (more  precisely,  a  new  call  to  \"gethostbyname\"  or\n           \"getaddrinfo\")  each  time  it makes a new connection.  Please note\n           that this option will not affect caching that might be performed by\n           the resolving library or by an  external  caching  layer,  such  as\n           NSCD.\n\nIf you don't understand exactly what this option does, you probably\n           won't need it."
+    },
+    {
+     "n": 5,
+     "source": "manpages/wget.man.txt",
+     "section": "OPTIONS",
+     "similarity": 0.6776,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "r in -N mode.  Send  preliminary\n           HEAD request instead. This has only effect in -N mode.\n\n--no-use-server-timestamps\n           Don't set the local file's timestamp by the one on the server.\n\nBy  default,  when  a file is downloaded, its timestamps are set to\n           match  those  from  the  remote  file.  This  allows  the  use   of\n           --timestamping  on  subsequent  invocations of wget. However, it is\n           sometimes useful to base the local file's timestamp on when it  was\n           actually      downloaded;      for      that      purpose,      the\n           --no-use-server-timestamps option has been provided.\n\n-S\n       --server-response\n           Print the headers sent by HTTP servers and responses  sent  by  FTP\n           servers.\n\n--spider\n           When  invoked  with  this option, Wget will behave as a Web spider,\n           which means that it will not download the pages,  just  check  that\n           they  are  there.   For  example,  you  can  use Wget to check your\n           bookmarks:\n\nwget --spider --force-html -i bookmarks.html\n\nThis feature needs much more work for Wget  to  get  close  to  the\n           functionality of real web spiders.\n\n-T seconds\n       --timeout=seconds\n           Set  the network timeout to seconds seconds.  This is equivalent to\n           specifying --dns-timeout,  --connect-timeout,  and  --read-timeout,\n           all at the same time."
+    }
+   ],
+   "error": null
+  },
+  {
    "id": "q07",
    "question": "what does the whatweb tool actually identify on a website?",
    "expect": "answer",
@@ -582,5 +678,5 @@
    "error": null
   }
  ],
- "updated": "2026-11-10 18:32"
+ "updated": "2026-11-10 18:36"
 }
