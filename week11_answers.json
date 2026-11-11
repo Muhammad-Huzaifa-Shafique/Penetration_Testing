@@ -676,7 +676,101 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q08",
+   "question": "what does the ss command show, and how is it different from netstat?",
+   "expect": "answer",
+   "kind": "man page",
+   "files": [
+    "manpages/ss.man.txt"
+   ],
+   "evidence": [
+    "used to dump socket statistics",
+    "similar to netstat"
+   ],
+   "must": [
+    "socket"
+   ],
+   "expected": "`ss` is used to dump socket statistics. It shows information similar to `netstat`; the man page says it can display more TCP and state information than other tools.",
+   "seconds": 114.4,
+   "answer": "According to [1], ss is used to dump socket statistics and can display more TCP and state information than other tools, similar to netstat.",
+   "truncated": false,
+   "prompt_tokens": 876,
+   "answer_tokens": 30,
+   "passage_numbers": [
+    1
+   ],
+   "passage_in_context": true,
+   "page_in_context": true,
+   "cited": [
+    1
+   ],
+   "cites_passage": true,
+   "must_found": [
+    "socket"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "manpages/ss.man.txt",
+     "section": "DESCRIPTION",
+     "similarity": 0.8034,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "ss  is  used  to  dump socket statistics. It allows showing information\n       similar to netstat.  It can display more TCP and state information than\n       other tools."
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/pentesting-web/ssti-server-side-template-injection/README.md",
+     "section": "XWiki SolrSearch Groovy RCE (CVE-2025-24893)",
+     "similarity": 0.7142,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "SSH. If the service unit sets `NoNewPrivileges=true`, tools such as `/bin/su` will not gain additional privileges even with valid passwords, so pivot via SSH instead of relying on local SUID binaries.\n\nThe same payload works on `/xwiki/bin/get/Main/SolrSearch`, and the Groovy stdout is always embedded in the RSS title, so it is easy to script enumeration of commands."
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-wifi/wifi-defense-monitoring-and-wids.md",
+     "section": "Check that the tap is connected and receiving frames.",
+     "similarity": 0.7028,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "sudo systemctl status nzyme-tap\n```\n\nTo investigate a suspected rogue, open **Alerts**, sort or page through the alerts by **First Seen**, and open the earliest relevant **Details** entry. Record the advertised SSID, observed BSSID, channel, security suite and first/last timestamps. Compare them with the authorized AP inventory and neighboring sensor observations: an unexpected BSSID or channel identifies a *candidate transmitter*, not its operator, because management-frame source addresses can be spoofed. Several alerts (unexpected BSSID, channel and crypto) may all describe the same transmitter; group them by BSSID and time instead of counting them as separate attackers. Do not confuse an old alert's **Last Seen** time with when the activity began. The [nzyme network-monitoring guide](https://docs.nzyme.org/wifi/monitoring/network-monitoring/) describes the expected-BSSID, channel, fingerprint and security-suite baselines that give those alerts meaning.<sup>[[3]](#references)</sup>"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-wifi/wifi-post-association-and-client-isolation-attacks.md",
+     "section": "Repeat the GTK comparison and broadcast primitive across different BSSIDs.",
+     "similarity": 0.7018,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "./airsnitch.py wlan2 --check-gtk-shared wlan3 --no-ssid-check --other-bss\n./airsnitch.py wlan2 --c2c-broadcast wlan3 --no-ssid-check --other-bss\n```\n\nWhen debugging a result, capture the group-key handshake and group-addressed data rather than printing key material into general logs:\n\n```bash"
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-wifi/owe.md",
+     "section": "Inspect the relevant frames and fields in the saved capture.",
+     "similarity": 0.7006,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "tshark -r owe-survey-01.cap -Y 'wlan.rsn.akms.type == 18 || wlan.tag.number == 114'\n```\n\nAlso compare SSID, BSSID, channel, PMF policy, and the partner BSSID/SSID advertised by transition mode. Wireshark field names can vary by release, so confirm the decoded RSN and OWE elements in the packet-details pane."
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 18:36"
+ "updated": "2026-11-10 22:59"
 }
