@@ -1235,7 +1235,102 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q14",
+   "question": "what is the DCSync technique in Active Directory, and which permissions does an account need to use it?",
+   "expect": "answer",
+   "kind": "HackTricks",
+   "files": [
+    "hacktricks/src/windows-hardening/active-directory-methodology/dcsync.md"
+   ],
+   "evidence": [
+    "simulates the behavior of a Domain Controller",
+    "Domain Admins, Enterprise Admins, Administrators, and Domain Controllers"
+   ],
+   "must": [
+    "Domain Controller"
+   ],
+   "expected": "DCSync simulates the behavior of a Domain Controller and asks other Domain Controllers to replicate information, using the Directory Replication Service Remote Protocol (MS-DRSR). Because MS-DRSR is a valid and necessary function of Active Directory, it cannot be turned off or disabled. A full DCSync needs the DS-Replication-Get-Changes and DS-Replication-Get-Changes-All permissions on the domain naming context; by default only the Domain Admins, Enterprise Admins, Administrators and Domain Controllers groups have the required privileges.",
+   "seconds": 116.9,
+   "answer": "The DCSync technique in Active Directory simulates the behavior of a Domain Controller and asks other Domain Controllers to replicate information using the Directory Replication Service Remote Protocol (MS-DRSR) [1]. To use DCSync, an account needs to have the permissions `DS-Replication-Get-Changes`, `DS-Replication-Get-Changes-All`, and `DS-Replication-Get-Changes-In-Filtered-Set` on the domain naming context [1][2].",
+   "truncated": false,
+   "prompt_tokens": 1437,
+   "answer_tokens": 103,
+   "passage_numbers": [
+    1
+   ],
+   "passage_in_context": true,
+   "page_in_context": true,
+   "cited": [
+    1,
+    2
+   ],
+   "cites_passage": true,
+   "must_found": [
+    "Domain Controller"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/windows-hardening/active-directory-methodology/dcsync.md",
+     "section": "DCSync",
+     "similarity": 0.8258,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "The **DCSync** permission implies having these permissions over the domain itself: **DS-Replication-Get-Changes**, **Replicating Directory Changes All** and **Replicating Directory Changes In Filtered Set**.<sup>[[3]](#references)</sup>\n\n**Important Notes about DCSync:**\n\n- The **DCSync attack simulates the behavior of a Domain Controller and asks other Domain Controllers to replicate information** using the Directory Replication Service Remote Protocol (MS-DRSR). Because MS-DRSR is a valid and necessary function of Active Directory, it cannot be turned off or disabled.\n- By default only **Domain Admins, Enterprise Admins, Administrators, and Domain Controllers** groups have the required privileges.\n- In practice, **full DCSync** needs **`DS-Replication-Get-Changes` + `DS-Replication-Get-Changes-All`** on the domain naming context. `DS-Replication-Get-Changes-In-Filtered-Set` is commonly delegated together with them, but on its own it is more relevant for syncing **confidential / RODC-filtered attributes** (for example legacy LAPS-style secrets) than for a full krbtgt dump.<sup>[[2]](#references)</sup>\n- If any account passwords are stored with reversible encryption, an option is available in Mimikatz to return the password in clear text"
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/windows-hardening/active-directory-methodology/acl-persistence-abuse/README.md",
+     "section": "**Replication on the Domain (DCSync)**",
+     "similarity": 0.792,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "The DCSync attack leverages specific replication permissions on the domain to mimic a Domain Controller and synchronize data, including user credentials. This powerful technique requires permissions like `DS-Replication-Get-Changes`, allowing attackers to extract sensitive information from the AD environment without direct access to a Domain Controller.<sup>[[5]](#references)</sup> [**Learn more about the DCSync attack here.**](../dcsync.md)"
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/windows-hardening/active-directory-methodology/constrained-delegation.md",
+     "section": "Omit this deletion for a ghost SPN",
+     "similarity": 0.7538,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "bloodyAD --host \"$DC\" -d \"$DOMAIN\" -u \"$WRITER\" -p \"$PASSWORD\" \\\n  msldap delspn \"$SOURCE_DN\" \"$DELEGATED_SPN\"\n\nbloodyAD --host \"$DC\" -d \"$DOMAIN\" -u \"$WRITER\" -p \"$PASSWORD\" \\\n  msldap addspn \"$TARGET_DN\" \"$DELEGATED_SPN\"\n\ngetST.py -dc-ip \"$DC_IP\" -spn \"$DELEGATED_SPN\" \\\n  -impersonate Administrator -altservice \"cifs/$TARGET_FQDN\" \\\n  \"$DOMAIN/$DELEGATING_ACCOUNT:$DELEGATING_PASSWORD\"\n```\n\n`-altservice` is the second, separate primitive. The S4U2Proxy ticket was encrypted for the account that now owns `$DELEGATED_SPN`; because the ticket service name (`sname`) is outside the encrypted ticket body, tooling can substitute another service class/hostname whose service uses that same account key. SPN-jacking first changes **which account key** protects the ticket, while service-class substitution changes **where that ticket is presented**.<sup>[[5]](#references)[[6]](#references)</sup>\n\nFor live jacking, reverse the two LDAP writes immediately after ticket acquisition to avoid breaking the legitimate service. On DCs with computer-account auditing enabled, hunt for Security event **4742** where `servicePrincipalName` is removed from one computer and shortly added to another, especially when the SPN hostname differs from the destination's `dNSHostName`. Correlate with event **4769**: S4U2Self presents the same account as client/service, while S4U2Proxy populates **Transited Services**.<sup>[[5]](#references)</sup>"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/windows-hardening/active-directory-methodology/README.md",
+     "section": "Faster 24-bit brute force when you control another computer account",
+     "similarity": 0.753,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "poetry run onelogon --dc-ip <DC_IP> --dc-name <DC_HOSTNAME> --username '<TARGET_ACCOUNT>' \\\n  --comp-username '<COMP_ACCOUNT>' --comp-pass '<COMP_PASSWORD>'\n```\n\nNotes:\n\n- The **scanner** is useful because the effective allow-list may exist in **SYSVOL**, in the **registry**, or in both.\n- The exploit path itself is important because it **does not require Domain Admin privileges** once a vulnerable account has been identified.\n- Compromising a **Domain Controller machine account** such as `DC$` is especially dangerous because resetting that password can directly enable broader **AD takeover** paths.\n- **Brute-force feasibility** depends on the mode: the public artifact describes a meet-in-the-middle approach, a **24-bit** brute force when another computer account is available, and slower **32-bit** variants.\n\nDetection / hardening notes:\n\n- Audit the allow-list policy and remove anything except temporary, explicitly required compatibility exceptions.\n- Monitor DC **System** events **5827/5828/5829/5830/5831** to catch vulnerable Netlogon connections being denied, discovered, or explicitly allowed by policy.\n- Treat accounts in `VulnerableChannelAllowList` as **high-risk** until the legacy dependency is removed."
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/windows-hardening/active-directory-methodology/privileged-groups-and-token-privileges.md",
+     "section": "Exchange Windows Permissions",
+     "similarity": 0.7473,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "This group can modify DACLs on the domain object, potentially granting DCSync privileges. Techniques for privilege escalation exploiting this group are detailed in Exchange-AD-Privesc GitHub repo.\n\n```bash"
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:05"
+ "updated": "2026-11-10 23:07"
 }
