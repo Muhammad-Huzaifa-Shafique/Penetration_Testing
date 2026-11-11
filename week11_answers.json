@@ -392,6 +392,101 @@
    "error": null
   },
   {
+   "id": "q05",
+   "question": "what does the -m option configure in hashcat?",
+   "expect": "answer",
+   "kind": "man page",
+   "files": [
+    "manpages/hashcat.man.txt"
+   ],
+   "evidence": [
+    "Hash-type, see references below",
+    "Hash types",
+    "3 = Brute-force"
+   ],
+   "must": [
+    "-m"
+   ],
+   "expected": "`-m`, `--hash-type=NUM` selects the hash type by number. The option itself is documented only as \"Hash-type, see references below\"; the reference is the man page's \"Hash types\" list, which maps numbers to hash types (it begins 0 = MD5, 10 = md5($pass.$salt), 20 = md5($salt.$pass)). Next to it, `-a`, `--attack-mode=NUM` selects the attack mode, whose reference lists 0 = Straight, 1 = Combination, 3 = Brute-force, 6 = Hybrid Wordlist + Mask and 7 = Hybrid Mask + Wordlist.",
+   "seconds": 176.0,
+   "answer": "The -m option configures the hash mode in hashcat. According to passage [1], it is used to specify the hash mode, where 22000 is used for WPA2-Personal candidates. Passage [3] also uses -m 22000 for testing WPA2 verifiers. Passage [5] uses -m 31300 for MS-SNTP MAC cracking.",
+   "truncated": false,
+   "prompt_tokens": 1150,
+   "answer_tokens": 81,
+   "passage_numbers": [],
+   "passage_in_context": false,
+   "page_in_context": false,
+   "cited": [
+    1,
+    3,
+    5
+   ],
+   "cites_passage": false,
+   "must_found": [
+    "-m"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-wifi/wpa2-personal-psk.md",
+     "section": "Test authorized WPA/WPA2 candidates against mode 22000 material.",
+     "similarity": 0.7456,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "hashcat -m 22000 --potfile-path=target.pot target.hc22000 wordlist.txt\n```\n\nRules and masks should reflect the organization's actual password-generation patterns, known defaults and authorized candidate data. A giant generic wordlist is usually less useful than vendor/model defaults, naming conventions and password-policy-derived candidates.\n\nFor each WPA2-Personal candidate, the tool first derives a PMK with PBKDF2-HMAC-SHA1 (4,096 iterations) using the **SSID as the salt**, then checks that key against the captured PMKID or EAPOL MIC. This is why trying a new passphrase is much costlier than comparing a fast unsalted hash, why GPU acceleration helps, and why a PMK precomputed for one SSID cannot be reused for a different SSID. Traditional \"rainbow tables\" only help for a previously computed SSID/candidate set; they do not make a unique, high-entropy passphrase weak. This offline check does not send new guesses to the AP, but it needs valid capture material and the exact SSID bytes.<sup>[[2]](#references)</sup>\n\nUse the password-policy and authorized inventory to order a **small, plausible** candidate set before expanding it. Hashcat's mask mode fixes known characters and iterates only unknown positions; hybrid mode appends a pattern to each word. The examples below test an eight-character lab pattern and four-digit suffixes respectively, using the same validated mode-22000 capture:<sup>[[11]](#references)</sup>\n\n```bash"
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-wifi/eap-methods.md",
+     "section": "Audit the extracted challenge-response against an approved candidate list.",
+     "similarity": 0.7453,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "hashcat -m 4800 -a 0 eapmd5.4800 wordlist.txt\n```\n\nWhen `wifi_db` has paired a standalone EAP-MD5 request/response, its `EAPMD5.hashcat` value is already formatted for mode 4800:<sup>[[4]](#references)</sup>\n\n```bash"
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-wifi/wpa3-personal-sae.md",
+     "section": "Test the approved password candidates against the captured WPA2 verifier.",
+     "similarity": 0.7384,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "hashcat -m 22000 -a 0 wpa3-fallback-clean.22000 candidates.txt\n```\n\nA `WPA*02*` record proves that this client attempted the WPA2 four-way handshake and supplied an offline verifier. It does not prove that the guessed password is still accepted by the genuine network, and the rogue never completed SAE. An SAE-only client that rejects the BSS and produces no M2 is the expected secure result. As an independent capture path, use standard `hostapd` with the same WPA2-only profile and let the second radio record M1/M2, then convert the PCAP using `hcxpcapngtool` as documented on the [WPA2 page](wpa2-personal-psk.md#convert-to-the-modern-hash-format)."
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/generic-methodologies-and-resources/pentesting-wifi/evil-twin-rogue-ap-and-client-association-attacks.md",
+     "section": "Test the approved candidate list against the client's attempted handshake.",
+     "similarity": 0.7346,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "hashcat -m 22000 -a 0 noap-clean.22000 candidates.txt\n```\n\nThe old hccapx/Hashcat mode 2500 workflow is obsolete; current hostapd-mana output and Hashcat use mode 22000. A recovered candidate can be stale or mistyped, so validate it against the intended network before treating it as the current PSK. Once it is known, EAPHammer can create the functional WPA2 AP; the client then joins a cryptographically valid clone and exposes the ordinary post-association surface:\n\n```bash"
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/windows-hardening/active-directory-methodology/TimeRoasting.md",
+     "section": "Output example lines: $sntp-ms$*<rid>*md5*<salt>*<mac>",
+     "similarity": 0.7333,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "```\n\n- Crack offline with Hashcat mode 31300 (MS-SNTP MAC):<sup>[[5]](#references)</sup>\n\n```bash\nhashcat -m 31300 timeroast.hashes /path/to/wordlist.txt --username"
+    }
+   ],
+   "error": null
+  },
+  {
    "id": "q07",
    "question": "what does the whatweb tool actually identify on a website?",
    "expect": "answer",
@@ -487,5 +582,5 @@
    "error": null
   }
  ],
- "updated": "2026-11-10 18:29"
+ "updated": "2026-11-10 18:32"
 }
