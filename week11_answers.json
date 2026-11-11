@@ -1049,7 +1049,101 @@
     }
    ],
    "error": null
+  },
+  {
+   "id": "q12",
+   "question": "what does the HttpOnly flag on a cookie protect against?",
+   "expect": "answer",
+   "kind": "HackTricks",
+   "files": [
+    "hacktricks/src/pentesting-web/hacking-with-cookies/README.md"
+   ],
+   "evidence": [
+    "prevents client-side JavaScript from reading the cookie",
+    "returns cookies in the response body"
+   ],
+   "must": [
+    "HttpOnly"
+   ],
+   "expected": "It prevents client-side JavaScript from reading the cookie through APIs such as `document.cookie`. The next section of the page, \"Bypasses\", lists ways around it: if a page returns cookies in its response body (for example a phpinfo() page), XSS may fetch that page and steal the reflected cookie despite HttpOnly, and it is possible to overwrite HttpOnly cookies with a Cookie Jar overflow attack.",
+   "seconds": 47.6,
+   "answer": "According to [1], the `HttpOnly` flag prevents client-side JavaScript from reading the cookie through APIs such as `document.cookie`.",
+   "truncated": false,
+   "prompt_tokens": 805,
+   "answer_tokens": 28,
+   "passage_numbers": [
+    1
+   ],
+   "passage_in_context": true,
+   "page_in_context": true,
+   "cited": [
+    1
+   ],
+   "cites_passage": true,
+   "must_found": [
+    "HttpOnly"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "hacktricks/src/pentesting-web/hacking-with-cookies/README.md",
+     "section": "HttpOnly",
+     "similarity": 0.8586,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "The `HttpOnly` flag prevents **client-side JavaScript** from reading the cookie through APIs such as `document.cookie`."
+    },
+    {
+     "n": 2,
+     "source": "hacktricks/src/pentesting-web/xss-cross-site-scripting/README.md",
+     "section": "Retrieve Cookies",
+     "similarity": 0.8073,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "> [!TIP]\n> You **won't be able to access the cookies from JavaScript** if the HTTPOnly flag is set in the cookie. But here you have [some ways to bypass this protection](../hacking-with-cookies/index.html#httponly) if you are lucky enough."
+    },
+    {
+     "n": 3,
+     "source": "hacktricks/src/pentesting-web/domain-subdomain-takeover.md",
+     "section": "**Cookie Security and Browser Transparency**",
+     "similarity": 0.7756,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "Cookie impact depends on cookie scope. A host-only cookie for `example.com` is not sent to `taken.example.com`, while a cookie set with `Domain=example.com` is sent to matching subdomains. `HttpOnly` prevents JavaScript from reading a cookie but does not prevent the browser from attaching a domain-scoped cookie to a request to the compromised host. `Secure` only restricts the transport to HTTPS.<sup>[[1]](#references)</sup>"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/pentesting-web/hacking-with-cookies/cookie-tossing.md",
+     "section": "Protection Bypass",
+     "similarity": 0.7465,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "A possible protection is for the server to reject requests containing two cookies with the same name but different values.<sup>[[2]](#references)</sup>\n\nTo bypass the scenario where the attacker is setting a cookie after the victim was already given the cookie, the attacker could cause a **cookie overflow** and then, once the **legit cookie is deleted, set the malicious one**.\n\n{{#ref}}\ncookie-jar-overflow.md\n{{#endref}}\n\nAnother useful **bypass** is to **URL-encode the cookie name** when a front-end protection compares raw names but the back end decodes them.<sup>[[2]](#references)</sup>"
+    },
+    {
+     "n": 5,
+     "source": "hacktricks/src/pentesting-web/hacking-with-cookies/README.md",
+     "section": "Cookies Prefixes",
+     "similarity": 0.7451,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "Cookies prefixed with `__Secure-` are required to be set alongside the `secure` flag from pages that are secured by HTTPS.\n\nFor cookies prefixed with `__Host-`, several conditions must be met:\n\n- They must be set with the `secure` flag.\n- They must originate from a page secured by HTTPS.\n- They are forbidden from specifying a domain, preventing their transmission to subdomains.\n- The path for these cookies must be set to `/`.\n\nIt is important to note that cookies prefixed with `__Host-` are not allowed to be sent to superdomains or subdomains. This restriction aids in isolating application cookies. Thus, employing the `__Host-` prefix for all application cookies can be considered a good practice for enhancing security and isolation."
+    }
+   ],
+   "error": null
   }
  ],
- "updated": "2026-11-10 23:03"
+ "updated": "2026-11-10 23:04"
 }
