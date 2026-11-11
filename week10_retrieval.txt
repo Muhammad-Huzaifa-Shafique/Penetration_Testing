@@ -1,0 +1,84 @@
+Casefile Week 10: the indexes compared on the answer key
+Run      2026-11-10 18:01, eval_retrieval.py (searches only; no chat model)
+Key      answer_key.txt: 20 questions (18 answer, 2 decline), sha256 3df926a39d98
+Corpus   corpus/chunks.jsonl: 22720 chunks, 1088 files
+Indexes  nomic = nomic-embed-text; nomic+pfx = nomic-embed-text-prefixed; minilm = all-minilm
+         merged = nomic+pfx + minilm, by reciprocal rank fusion (each list adds 1/(60 + rank))
+Depth    the top 10 chunks per index and question
+
+1. Answer questions (18): how many have the passage holding the answer in the top n
+   passage = a chunk from a source: file that contains an evidence: phrase
+   page    = any chunk from a source: file
+   MRR     = mean of 1/rank of the first passage (0 when it is not in the list)
+              passage                       page
+   index         @1   @3   @5  @10    MRR      @1   @3   @5  @10
+   nomic          6    9   10   11  0.435      13   18   18   18
+   nomic+pfx      8    9   10   11  0.494      13   16   17   17
+   minilm         6    8   11   12  0.435      14   17   18   18
+   merged         7    9   12   12  0.471      14   16   18   18
+
+2. Passage in the top 5, by where the answer is
+   answer in        nomic  nomic+pfx  minilm  merged
+   man page (7)         3          4       3       4
+   HackTricks (10)      6          5       7       7
+   both (1)             1          1       1       1
+
+3. Rank of the first passage per answer question (p4 = no passage in the top 10, but
+   a chunk of the right page at rank 4; - = neither)
+   id  question                                      nomic  nomic+pfx  minilm  merged
+   q02 what does the -k flag do in curl, and why...     p1          2      p1       5
+   q03 what does nmap's -Pn option do and when w...      2          1       4       2
+   q04 what does sudo -l show me about my own ac...     p1         p1      p1      p1
+   q05 what does the -m option configure in hash...     p2          -      p1      p5
+   q06 what does wget's --mirror option turn on?        p1         p2      p1      p2
+   q07 what does the whatweb tool actually ident...      1          1       1       1
+   q08 what does the ss command show, and how is...      1          1       1       1
+   q09 how do I search a whole Linux filesystem...       1          1       1       1
+   q10 after getting a basic reverse shell, how...      p2         p2       8      p2
+   q11 how do you test whether a web page is vul...      1          1       1       1
+   q12 what does the HttpOnly flag on a cookie p...      1          1       1       1
+   q13 how do I ask a DNS server for a full copy...     p1         p1      p2      p1
+   q14 what is the DCSync technique in Active Di...      1          1       2       1
+   q15 what is a padding oracle, and what makes...       2          4       2       5
+   q16 according to the corpus's general pentest...     p3         p2      p4      p1
+   q17 what command-line tools does the corpus m...      2          1       5       1
+   q18 what do the different flags on "adb insta...      8         p5       1       4
+   q19 how do I check whether macOS Gatekeeper i...      5          7       4       3
+
+4. Top-1 similarity per question: data for the Week 12 "nothing found" cutoff.
+   Each index has its own scale: compare down a column, not across.
+   id  kind    question                                       nomic  nomic+pfx  minilm
+   q01 decline what is ethical hacking                        0.650      0.660   0.549
+   q02 answer  what does the -k flag do in curl, and why...   0.685      0.711   0.602
+   q03 answer  what does nmap's -Pn option do and when w...   0.768      0.791   0.632
+   q04 answer  what does sudo -l show me about my own ac...   0.669      0.724   0.578
+   q05 answer  what does the -m option configure in hash...   0.724      0.746   0.716
+   q06 answer  what does wget's --mirror option turn on?      0.650      0.707   0.598
+   q07 answer  what does the whatweb tool actually ident...   0.814      0.835   0.699
+   q08 answer  what does the ss command show, and how is...   0.811      0.803   0.853
+   q09 answer  how do I search a whole Linux filesystem...    0.675      0.719   0.647
+   q10 answer  after getting a basic reverse shell, how...    0.737      0.763   0.668
+   q11 answer  how do you test whether a web page is vul...   0.850      0.841   0.673
+   q12 answer  what does the HttpOnly flag on a cookie p...   0.803      0.859   0.702
+   q13 answer  how do I ask a DNS server for a full copy...   0.705      0.720   0.499
+   q14 answer  what is the DCSync technique in Active Di...   0.788      0.826   0.757
+   q15 answer  what is a padding oracle, and what makes...    0.694      0.730   0.562
+   q16 answer  according to the corpus's general pentest...   0.648      0.731   0.445
+   q17 answer  what command-line tools does the corpus m...   0.734      0.753   0.692
+   q18 answer  what do the different flags on "adb insta...   0.710      0.737   0.481
+   q19 answer  how do I check whether macOS Gatekeeper i...   0.795      0.791   0.638
+   q20 decline how do I write a snort rule to detect por...   0.713      0.747   0.578
+   -----------------------------------------------------------------------------------
+   answer questions: lowest top-1                             0.648      0.707   0.445
+   answer questions: median top-1                             0.729      0.749   0.643
+   lowest top-1 where the passage was in the top 10           0.675      0.711   0.481
+   decline questions: highest top-1                           0.713      0.747   0.578
+   gap = lowest found - highest decline                      -0.038     -0.036  -0.097
+   A positive gap means some cutoff would keep every answer question whose passage was found
+   and turn away every decline question, in this sample (2 decline question(s)).
+
+5. Notes
+   nomic: 20 searches in 2.8 s
+   nomic+pfx: 20 searches in 1.9 s
+   minilm: 20 searches in 1.3 s
+   Every retrieved chunk, per question and index, is in week10_retrieval.json.
