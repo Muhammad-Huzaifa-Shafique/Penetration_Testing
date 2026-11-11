@@ -1,0 +1,52 @@
+Casefile Week 11: the answer key asked through ask(), for grading
+Run      started 2026-11-10 18:10, last saved 2026-11-10 18:11, eval_answers.py
+Key      answer_key.txt: sha256 3df926a39d98, 20 questions
+Model    llama3.1:8b, temperature 0.2, context 8192 tokens; generation is not seeded
+Search   nomic-embed-text-prefixed, top 5 (retrieve.py's default); each question asked on its own (no history)
+Answered 1 of 20
+
+Automatic checks (they help the grading; they do not grade):
+  passage  = numbers of the passages given that hold the answer (- = none was given)
+  cites    = the answer cites one of them;  must = the key's must: texts found in the answer
+  declined = the citation check reads it as 'the passages do not cover this'
+  check    = problems the citation check found (wording and citation numbers, not truth)
+
+  id   expect   passage   cites  must   declined  check  time
+  q07  answer   1         yes    1/1    no        0      115 s
+
+  Answer questions: the answer passage was given for 1 of 1; cited in 1 of those 1.
+  All must: texts found: 1 of 1. Read as declines: 0 of 1 answer questions.
+  Time: 1.9 minutes in all, 115-115 s per question.
+
+==================== q07 [answer] what does the whatweb tool actually identify on a website?
+The answer is in passage [1]; the answer cites it.
+must: 1 of 1 found (WhatWeb). Declined: no.
+Citation check: no problems.
+Time 115 s; prompt 1078 tokens, answer 95 tokens. Cited: [1], [3].
+
+  Casefile's answer:
+    According to [1], WhatWeb identifies websites by recognising web technologies, including:
+
+    * Content management systems (CMS)
+    * Blogging platforms
+    * Statistic/analytics packages
+    * JavaScript libraries
+    * Web servers
+    * Embedded devices
+    * Version numbers
+    * Email addresses
+    * Account IDs
+    * Web framework modules
+    * SQL errors
+
+    It also identifies specific technologies such as WordPress, which can be identified by the meta HTML tag, among other cues [3].
+
+  The key's expected answer:
+    WhatWeb identifies websites (its goal is to answer "What is that Website?"). It recognises web technologies including content management systems (CMS), blogging platforms, statistics/analytics packages, JavaScript libraries, web servers and embedded devices, and it also identifies version numbers, email addresses, account IDs, web framework modules and SQL errors. It has over 1800 plugins, each to recognise something different. Its default aggression level, "passive", is the fastest and needs only one HTTP request, which suits scanning public websites; more aggressive modes were developed for penetration tests.
+
+  Passages given (* = holds the answer, p = right page, e = an evidence phrase from another file):
+    [1] * 0.835  manpages/whatweb.man.txt > DESCRIPTION
+    [2] p 0.778  manpages/whatweb.man.txt > NAME
+    [3] p 0.735  manpages/whatweb.man.txt > DESCRIPTION
+    [4]   0.705  hacktricks/src/network-services-pentesting/pentesting-web/graphql.md > Fingerprint
+    [5] p 0.704  manpages/whatweb.man.txt > HTTP OPTIONS

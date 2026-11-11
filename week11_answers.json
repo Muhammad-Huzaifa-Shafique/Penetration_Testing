@@ -1,0 +1,122 @@
+{
+ "made": "2026-11-10 18:10",
+ "script": "eval_answers.py",
+ "settings": {
+  "chat_model": "llama3.1:8b",
+  "temperature": 0.2,
+  "num_ctx": 8192,
+  "answer_sees_history": false,
+  "embedder": null,
+  "k": null,
+  "index": "nomic-embed-text-prefixed",
+  "k_text": "top 5 (retrieve.py's default)"
+ },
+ "key": {
+  "file": "answer_key.txt",
+  "sha256": "3df926a39d98e89026bf15c7e04970e8ddfa8cc664d4760de678c87d01d61d0a",
+  "questions": 20
+ },
+ "corpus": {
+  "file": "corpus/chunks.jsonl",
+  "chunks": 22720,
+  "files": 1088
+ },
+ "questions": [
+  {
+   "id": "q07",
+   "question": "what does the whatweb tool actually identify on a website?",
+   "expect": "answer",
+   "kind": "man page",
+   "files": [
+    "manpages/whatweb.man.txt"
+   ],
+   "evidence": [
+    "WhatWeb recognises web technologies",
+    "WhatWeb has over 1800 plugins"
+   ],
+   "must": [
+    "WhatWeb"
+   ],
+   "expected": "WhatWeb identifies websites (its goal is to answer \"What is that Website?\"). It recognises web technologies including content management systems (CMS), blogging platforms, statistics/analytics packages, JavaScript libraries, web servers and embedded devices, and it also identifies version numbers, email addresses, account IDs, web framework modules and SQL errors. It has over 1800 plugins, each to recognise something different. Its default aggression level, \"passive\", is the fastest and needs only one HTTP request, which suits scanning public websites; more aggressive modes were developed for penetration tests.",
+   "seconds": 115.1,
+   "answer": "According to [1], WhatWeb identifies websites by recognising web technologies, including:\n\n* Content management systems (CMS)\n* Blogging platforms\n* Statistic/analytics packages\n* JavaScript libraries\n* Web servers\n* Embedded devices\n* Version numbers\n* Email addresses\n* Account IDs\n* Web framework modules\n* SQL errors\n\nIt also identifies specific technologies such as WordPress, which can be identified by the meta HTML tag, among other cues [3].",
+   "truncated": false,
+   "prompt_tokens": 1078,
+   "answer_tokens": 95,
+   "passage_numbers": [
+    1
+   ],
+   "passage_in_context": true,
+   "page_in_context": true,
+   "cited": [
+    1,
+    3
+   ],
+   "cites_passage": true,
+   "must_found": [
+    "WhatWeb"
+   ],
+   "declined": false,
+   "check_problems": [],
+   "passages": [
+    {
+     "n": 1,
+     "source": "manpages/whatweb.man.txt",
+     "section": "DESCRIPTION",
+     "similarity": 0.8348,
+     "passage": true,
+     "page": true,
+     "evidence": true,
+     "also_in": [],
+     "text": "WhatWeb identifies websites. It's goal is to answer the question, \"What\n       is that Website?\". WhatWeb recognises web technologies  including  con‐\n       tent  management systems (CMS), blogging platforms, statistic/analytics\n       packages, JavaScript libraries,  web  servers,  and  embedded  devices.\n       WhatWeb  has  over 1800 plugins, each to recognise something different.\n       WhatWeb also identifies version numbers, email addresses, account ID's,\n       web framework modules, SQL errors, and more.\n\nWhatWeb can be stealthy and fast, or thorough but  slow.  WhatWeb  sup‐\n       ports  an  aggression  level to control the trade off between speed and\n       reliability. When you visit a website in your browser, the  transaction\n       includes many hints of what web technologies are powering that website.\n       Sometimes  a  single webpage visit contains enough information to iden‐\n       tify a website but when it does not, WhatWeb can interrogate  the  web‐\n       site further. The default level of aggression, called 'passive', is the\n       fastest  and requires only one HTTP request of a website. This is suit‐\n       able for scanning public websites. More aggressive modes were developed\n       for in penetration tests."
+    },
+    {
+     "n": 2,
+     "source": "manpages/whatweb.man.txt",
+     "section": "NAME",
+     "similarity": 0.7785,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "WhatWeb  -  Next  generation Web scanner. Identify technologies used by\n       websites."
+    },
+    {
+     "n": 3,
+     "source": "manpages/whatweb.man.txt",
+     "section": "DESCRIPTION",
+     "similarity": 0.7352,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "', is the\n       fastest  and requires only one HTTP request of a website. This is suit‐\n       able for scanning public websites. More aggressive modes were developed\n       for in penetration tests.\n\nMost WhatWeb plugins are thorough and recognise a range  of  cues  from\n       subtle  to obvious. For example, most WordPress websites can be identi‐\n       fied by the meta HTML tag, e.g. '<meta name=\"generator\"  content=\"Word‐\n       Press  2.6.5\">', but a minority of WordPress websites remove this iden‐\n       tifying tag but this does not thwart  WhatWeb.  The  WordPress  WhatWeb\n       plugin  has  over 15 tests, which include checking the favicon, default\n       installation files, login pages, and checking for \"/wp-content/\" within\n       relative links.\n\nFeatures:\n\n* Over 1800 plugins\n\n* Control the trade off between speed/stealth and reliability\n\n* Performance tuning. Control how many websites to scan concur‐\n       rently.\n\n* Multiple log formats: Brief (greppable), Verbose (human read‐\n       able), XML, JSON, MagicTree, RubyObject, MongoDB, SQL.\n\n* Proxy support including TOR\n\n* Custom HTTP headers\n\n* Basic HTTP authentication\n\n* Control over webpage redirection\n\n* IP address ranges\n\n* Fuzzy matching\n\n* Result certainty awareness\n\n* Custom plugins defined on the command line\n\n* IDN (International Domain Name) support"
+    },
+    {
+     "n": 4,
+     "source": "hacktricks/src/network-services-pentesting/pentesting-web/graphql.md",
+     "section": "Fingerprint",
+     "similarity": 0.7045,
+     "passage": false,
+     "page": false,
+     "evidence": false,
+     "also_in": [],
+     "text": "The tool [**graphw00f**](https://github.com/dolevf/graphw00f) can identify the GraphQL engine used by a server and print information useful to a security auditor."
+    },
+    {
+     "n": 5,
+     "source": "manpages/whatweb.man.txt",
+     "section": "HTTP OPTIONS",
+     "similarity": 0.7036,
+     "passage": false,
+     "page": true,
+     "evidence": false,
+     "also_in": [],
+     "text": "--user-agent, -U=AGENT\n              Identify as AGENT instead of WhatWeb/0.4.9.\n\n--header, -H\n              Add an HTTP header. eg \"Foo:Bar\". Specifying  a  default  header\n              will  replace  it. Specifying an empty value, e.g. \"User-Agent:\"\n              will remove it.\n\n--follow-redirect=WHEN\n              Control when to follow redirects. WHEN may  be  `never',  `http-\n              only', `meta-only', `same-site', or `always'. Default: always.\n\n--max-redirects=NUM\n              Maximum number of redirects. Default: 10."
+    }
+   ],
+   "error": null
+  }
+ ],
+ "updated": "2026-11-10 18:11"
+}
