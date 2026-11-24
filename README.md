@@ -6,6 +6,22 @@ It was built week by week as a capstone project and works in six steps: collect 
 
 > Intended for learning, authorized labs, CTFs, and coursework. Casefile only retrieves and summarizes existing public documentation. Always check an answer against the sources it cites.
 
+## What this project shows
+
+Casefile is a retrieval-augmented generation (RAG) system. It first finds the passages in a document collection that match a question, then has a language model answer from those passages only, and it runs entirely on a local machine.
+
+| What an AI/ML team looks for | Where it shows up here |
+|---|---|
+| A full RAG pipeline, built stage by stage | Collect, split into chunks of about 1,500 characters with overlap, embed, index 22,720 chunks in a Chroma vector database, search, answer with llama3.1:8b through Ollama, then check the citations. Each stage is its own script |
+| Comparing embedding setups instead of picking one | The same 22,720 chunks are indexed three ways: nomic-embed-text, the same model with its recommended prefixes, and all-minilm. On 7 test questions, the number of top-5 passages that all three returned ranged from 0 to 4 and was 1 or fewer on four of the seven (see `week5_compare_3way.txt`). The choice of embedding model changes what the language model gets to read |
+| Guardrails against made-up answers | `sources.py` checks every [n] citation against the passages the model was shown, and checks that commands, flags and numbers in a cited sentence appear in the passage it cites. It catches a citation to a passage that was never retrieved, a flag that sits in a different passage, and a tool that appears in no passage. 58 unit tests cover it |
+| Knowing what a check cannot prove | The header of `sources.py` says the check cannot tell whether a sentence is true. A test gives it a Week 6-style answer that describes `-sV` backwards, and it still passes a text match, so the limit is documented and tested rather than hidden |
+| Private by design | The embeddings and the answer model both run through Ollama on your own computer, so no question goes to a cloud AI service |
+
+**Not done yet.** The 7 questions in `my_questions.txt` are a smoke test, as the first line of that file says, not a benchmark. There is no answer key yet, so there are no recall@k or answer-accuracy figures, and no claim that one embedding setup beats another. An off-topic control question (sourdough bread) got the lowest top-1 similarity of the seven under all three setups, between 0.29 and 0.58 depending on the model. That hints a similarity cutoff could flag questions the collection cannot answer, but no cutoff has been tested, and scores from different models cannot be compared with each other.
+
+**Next step.** Build the answer key (the "Week 9 answer key" named in `my_questions.txt`): questions paired with the passages that really answer them. Then measure recall@5 for each embedding setup and score the written answers for how well they stick to their sources.
+
 ## How it works
 
 ```
